@@ -98,7 +98,25 @@ src/
   with a gradient «بحر» calligraphy hero and a light/dark toggle. We deliberately use **none** of that: no contour lines, no
   calligraphy, no theme toggle — depth is felt through the scroll dive itself (water surface → light falloff → seabed).
   The Arabic hero is set in IBM Plex Sans Arabic Bold, plain and typographic.
+- **Performance architecture.** `index.html` holds a static, styled copy of the hero (first paint); `src/main.tsx` is a
+  tiny entry that imports the app (`src/boot.tsx`) after the first contentful paint. Motion features load through
+  `LazyMotion`; WebGL loads on first interaction or ~4.5 s after load (idle).
+- **Agency overlap.** Under normal motion the agency section is pulled up 45svh so it rises over the end of the hero pin
+  (no empty "dead water" screen); in reduced motion there is no pin and no overlap.
 - Default language EN; choice persisted in `localStorage` and applied by an inline script before first paint (no flash).
 
 ## Status
-- [ ] Step 0 — setup
+**Shipped.** (all phases complete — see git history)
+
+- Repo: https://github.com/lvbfront/bahr-dive-redesign (`main`; work branch `claude/nice-faraday-nzc3xg`)
+- Live: deploys on push once the repo is imported in Vercel (defaults: Vite / `npm run build` / `dist`). The Vercel CLI
+  was not available in the build container, so the first deploy is a one-time manual import.
+- Lighthouse (local prod build, simulated throttling): mobile Performance 85–88, desktop 97; Accessibility,
+  Best practices and SEO 100 on both.
+- Verified with Playwright screenshots: EN + AR, 1440 / 1024 / 390 / 375 widths, reduced motion, menu, language toggle,
+  hover states, portal click, keyboard focus. No horizontal scroll at any width. Only remaining console message is
+  a three.js `THREE.Clock` deprecation *warning* emitted from inside React Three Fiber (not our code).
+
+Phase log: Step 0 setup ✅ · Phase 1 dive system ✅ · Phase 2 hero ✅ · Phase 3 agency + clients ✅ · Phase 4 expertise ✅ ·
+Phase 5 work + contact + footer ✅ · Phase 6 Arabic/RTL ✅ · Phase 7 polish (perf, a11y, reduced motion, cursor, intro,
+meta/OG) ✅ · Verify ✅ · Ship ✅
