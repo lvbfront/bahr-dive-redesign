@@ -1,5 +1,5 @@
 import { useRef, type ReactNode } from 'react'
-import { motion, useMotionValue, useSpring } from 'motion/react'
+import { m, useMotionValue, useSpring } from 'motion/react'
 import { useFinePointer, useReducedMotion } from '../../lib/hooks'
 
 /** Hover-only magnetic pull (Framer Motion owns this transform). */
@@ -14,7 +14,7 @@ export function Magnetic({ children, strength = 0.35, className = '' }: { childr
   const enabled = fine && !reduced
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       className={`inline-block ${className}`}
       style={enabled ? { x: sx, y: sy } : undefined}
@@ -30,6 +30,6 @@ export function Magnetic({ children, strength = 0.35, className = '' }: { childr
       }}
     >
       {children}
-    </motion.div>
+    </m.div>
   )
 }

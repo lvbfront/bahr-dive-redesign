@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 import { gsap, ScrollTrigger, SplitText, useGSAP, EASE_SCRUB } from '../../lib/gsap'
 import { useLang } from '../../lib/i18n'
 import { useInView, usePageVisible, useReducedMotion } from '../../lib/hooks'
@@ -11,7 +11,9 @@ const WaterCanvas = lazy(() => import('./WaterCanvas'))
 function webglAvailable() {
   try {
     const c = document.createElement('canvas')
-    return !!(c.getContext('webgl2') || c.getContext('webgl'))
+    const gl = c.getContext('webgl2') || c.getContext('webgl')
+    gl?.getExtension('WEBGL_lose_context')?.loseContext()
+    return !!gl
   } catch {
     return false
   }
@@ -28,17 +30,33 @@ export function Hero() {
   const [loadGL, setLoadGL] = useState(false)
   const [glReady, setGlReady] = useState(false)
 
-  // Lazy-load the WebGL water only after the page (and headline) has painted, when idle.
+  // Lazy-load the WebGL water after the page (and headline) has painted: on the first interaction, or ~4.5 s after
+  // load when idle. WebGL support is only probed at that moment (creating a context is not free).
   useEffect(() => {
-    if (reduced || !webglAvailable()) return
+    if (reduced) return
     let cancelled = false
-    const go = () => !cancelled && setLoadGL(true)
-    const idle = () => (window.requestIdleCallback ? window.requestIdleCallback(go, { timeout: 2500 }) : setTimeout(go, 900))
-    if (document.readyState === 'complete') idle()
-    else window.addEventListener('load', idle, { once: true })
+    let timer = 0
+    const events = ['pointermove', 'pointerdown', 'wheel', 'touchstart', 'keydown', 'scroll'] as const
+    const go = () => {
+      if (cancelled) return
+      cancelled = true
+      cleanup()
+      if (webglAvailable()) setLoadGL(true)
+    }
+    const cleanup = () => {
+      events.forEach((e) => window.removeEventListener(e, go))
+      window.removeEventListener('load', arm)
+      clearTimeout(timer)
+    }
+    const arm = () => {
+      timer = window.setTimeout(() => (window.requestIdleCallback ? window.requestIdleCallback(go, { timeout: 1500 }) : go()), 4500)
+    }
+    events.forEach((e) => window.addEventListener(e, go, { once: true, passive: true }))
+    if (document.readyState === 'complete') arm()
+    else window.addEventListener('load', arm, { once: true })
     return () => {
       cancelled = true
-      window.removeEventListener('load', idle)
+      cleanup()
     }
   }, [reduced])
 
@@ -64,7 +82,7 @@ export function Hero() {
         gsap.fromTo(h, { opacity: 0 }, { opacity: 1, duration: 0.8, ease: 'power1.out' })
         return
       }
-      const split = SplitText.create(h.querySelectorAll('[data-line]'), {
+      const split = SplitText.create(h, {
         type: isRTL ? 'lines,words' : 'lines,words,chars',
         mask: 'lines',
         linesClass: 'split-mask',
@@ -130,7 +148,7 @@ export function Hero() {
       // fonts / language changes alter layout
       ScrollTrigger.refresh()
     },
-    { scope: section, dependencies: [lang] },
+    { scope: section, dependencies: [lang], revertOnUpdate: true },
   )
 
   return (
@@ -141,7 +159,7 @@ export function Hero() {
           <div data-css-surface className="water-fallback absolute inset-0 origin-top overflow-hidden" />
           <div data-under className="absolute inset-0 bg-[linear-gradient(180deg,#d9e6e7_0%,#9fb7c4_45%,#6f93a5_100%)] opacity-0" />
           {loadGL && (
-            <motion.div
+            <m.div
               className="absolute inset-0"
               initial={{ opacity: 0 }}
               animate={{ opacity: glReady ? 1 : 0 }}
@@ -150,7 +168,7 @@ export function Hero() {
               <Suspense fallback={null}>
                 <WaterCanvas active={inView && visible} onReady={() => setGlReady(true)} />
               </Suspense>
-            </motion.div>
+            </m.div>
           )}
           {/* meniscus: the bright line of the surface sweeping past the lens */}
           <div

@@ -1,5 +1,6 @@
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { PerformanceMonitor } from '@react-three/drei'
 import * as THREE from 'three'
 import { heroState } from './heroState'
 
@@ -164,15 +165,18 @@ function Water() {
 }
 
 export default function WaterCanvas({ active, onReady }: { active: boolean; onReady: () => void }) {
+  // DPR capped at 1.5; drei's PerformanceMonitor drops it to 1 on devices that can't hold the frame rate.
+  const [dpr, setDpr] = useState(Math.min(window.devicePixelRatio || 1, 1.5))
   return (
     <Canvas
-      dpr={[1, 1.5]}
+      dpr={dpr}
       frameloop={active ? 'always' : 'never'}
       gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
       camera={{ fov: 50, near: 0.05, far: 60, position: [0, 1.45, 4.2] }}
       onCreated={() => requestAnimationFrame(onReady)}
       aria-hidden
     >
+      <PerformanceMonitor onDecline={() => setDpr(1)} onIncline={() => setDpr(Math.min(window.devicePixelRatio || 1, 1.5))} />
       <Water />
     </Canvas>
   )

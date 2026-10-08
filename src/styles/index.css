@@ -320,3 +320,8 @@ html.has-cursor button {
     animation: none;
   }
 }
+
+/* Latin brand marks keep the display face inside Arabic pages */
+[lang='ar'] [lang='en'] {
+  --font-display: 'Syne', ui-sans-serif, system-ui, sans-serif;
+}

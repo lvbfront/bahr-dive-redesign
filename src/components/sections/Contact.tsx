@@ -21,7 +21,7 @@ export function Contact() {
     () => {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
       const title = root.current!.querySelector('[data-title]')!
-      const split = SplitText.create(title.querySelectorAll('[data-line]'), {
+      const split = SplitText.create(title, {
         type: isRTL ? 'lines,words' : 'lines,words,chars',
         mask: 'lines',
         linesClass: 'split-mask',

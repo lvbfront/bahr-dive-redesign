@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { motion, useAnimationControls } from 'motion/react'
+import { m, useAnimationControls } from 'motion/react'
 import { gsap } from '../../lib/gsap'
 import { MAX_DEPTH, diveStore, useSectionIndex } from '../../lib/dive'
 import { useLang } from '../../lib/i18n'
@@ -60,7 +60,7 @@ export function DepthMeter() {
         <div className="relative h-[38vh] w-px bg-[var(--line)]">
           <div ref={fillRef} className="absolute inset-0 origin-top bg-current opacity-60" />
           <div ref={markerRef} className="absolute inset-0">
-            <motion.span
+            <m.span
               animate={pulse}
               className="absolute -start-[5px] -top-[5px] block size-[11px] rounded-full border border-current bg-[var(--fg-inverse)]"
               style={{ boxShadow: seabed ? '0 0 18px 2px #5ff2e6' : 'none', borderColor: seabed ? '#5ff2e6' : undefined }}

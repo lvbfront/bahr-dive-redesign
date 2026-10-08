@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { motion, useMotionValue, useSpring } from 'motion/react'
+import { m, useMotionValue, useSpring } from 'motion/react'
 import { useFinePointer, useReducedMotion } from '../../lib/hooks'
 
 /** Small ring that becomes a bubble over interactive elements. Fine pointers only. */
@@ -44,12 +44,12 @@ export function Cursor() {
 
   if (!enabled) return null
   return (
-    <motion.div
+    <m.div
       aria-hidden
       className="pointer-events-none fixed top-0 left-0 z-[100] mix-blend-difference"
       style={{ x: sx, y: sy }}
     >
-      <motion.div
+      <m.div
         className="-translate-x-1/2 -translate-y-1/2 rounded-full border border-white"
         animate={{
           width: hover ? 56 : 18,
@@ -61,6 +61,6 @@ export function Cursor() {
         }}
         transition={{ type: 'spring', stiffness: 400, damping: 28 }}
       />
-    </motion.div>
+    </m.div>
   )
 }

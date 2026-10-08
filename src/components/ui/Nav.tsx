@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, m } from 'motion/react'
 import { useLang } from '../../lib/i18n'
 import { scrollToTarget, getLenis } from '../../providers/SmoothScroll'
 import { LangToggle } from './LangToggle'
@@ -35,6 +35,10 @@ export function Nav() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-40">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[140%] backdrop-blur-md [mask-image:linear-gradient(to_bottom,black_45%,transparent)]"
+      />
       <nav
         aria-label="Primary"
         className="flex items-center justify-between gap-6 py-5 ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)]"
@@ -78,12 +82,12 @@ export function Nav() {
             aria-label={open ? t.a11y.menuClose : t.a11y.menuOpen}
             onClick={() => setOpen((o) => !o)}
           >
-            <motion.span
+            <m.span
               className="absolute h-px w-4 bg-current"
               animate={open ? { rotate: 45, y: 0 } : { rotate: 0, y: -3 }}
               transition={{ duration: 0.4, ease: EXPO }}
             />
-            <motion.span
+            <m.span
               className="absolute h-px w-4 bg-current"
               animate={open ? { rotate: -45, y: 0 } : { rotate: 0, y: 3 }}
               transition={{ duration: 0.4, ease: EXPO }}
@@ -94,7 +98,7 @@ export function Nav() {
 
       <AnimatePresence>
         {open && (
-          <motion.div
+          <m.div
             id="mobile-menu"
             role="dialog"
             aria-modal="true"
@@ -107,7 +111,7 @@ export function Nav() {
           >
             <ul className="flex flex-col gap-2">
               {[...t.nav.links, { id: 'contact', label: t.nav.cta }].map((l, i) => (
-                <motion.li
+                <m.li
                   key={l.id}
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -117,18 +121,18 @@ export function Nav() {
                   <a href={`#${l.id}`} onClick={go(l.id)} className="font-display block py-1 text-5xl font-bold">
                     {l.label}
                   </a>
-                </motion.li>
+                </m.li>
               ))}
             </ul>
-            <motion.p
+            <m.p
               className="text-sm text-[#e9ede9]/60"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { delay: 0.5 } }}
               exit={{ opacity: 0 }}
             >
               {t.hero.meta}
-            </motion.p>
-          </motion.div>
+            </m.p>
+          </m.div>
         )}
       </AnimatePresence>
     </header>

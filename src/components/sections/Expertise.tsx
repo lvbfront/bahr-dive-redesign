@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
+import { AnimatePresence, LayoutGroup, m } from 'motion/react'
 import { gsap, ScrollTrigger, SplitText, useGSAP } from '../../lib/gsap'
 import { useLang } from '../../lib/i18n'
 import { useDesktop, useReducedMotion } from '../../lib/hooks'
@@ -171,14 +171,14 @@ function StackedExpertise() {
           {t.expertise.services.map((s, i) => {
             const isOpen = open === i
             return (
-              <motion.li
+              <m.li
                 layout
                 key={s.key}
                 data-card
                 className="overflow-hidden rounded-3xl border border-[var(--line)] bg-white/[0.03]"
                 transition={{ layout: { duration: 0.6, ease: EXPO } }}
               >
-                <motion.button
+                <m.button
                   layout="position"
                   type="button"
                   aria-expanded={isOpen}
@@ -192,18 +192,18 @@ function StackedExpertise() {
                     </span>
                     <span className="font-display text-2xl font-bold sm:text-3xl">{s.title}</span>
                   </span>
-                  <motion.span
+                  <m.span
                     aria-hidden
                     animate={{ rotate: isOpen ? 45 : 0 }}
                     transition={{ duration: 0.5, ease: EXPO }}
                     className="flex size-9 shrink-0 items-center justify-center rounded-full border border-current text-lg"
                   >
                     +
-                  </motion.span>
-                </motion.button>
+                  </m.span>
+                </m.button>
                 <AnimatePresence initial={false}>
                   {isOpen && (
-                    <motion.div
+                    <m.div
                       id={`svc-${s.key}`}
                       key="body"
                       initial={{ opacity: 0, height: 0 }}
@@ -218,10 +218,10 @@ function StackedExpertise() {
                         <p className="text-muted">{s.body}</p>
                         <Tags tags={s.tags} />
                       </div>
-                    </motion.div>
+                    </m.div>
                   )}
                 </AnimatePresence>
-              </motion.li>
+              </m.li>
             )
           })}
         </ul>

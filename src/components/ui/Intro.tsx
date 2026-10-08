@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, m } from 'motion/react'
 import { useLang } from '../../lib/i18n'
 import { markIntroDone } from '../hero/heroState'
 import { useReducedMotion } from '../../lib/hooks'
@@ -38,7 +38,7 @@ export function Intro() {
   return (
     <AnimatePresence onExitComplete={markIntroDone}>
       {show && (
-        <motion.div
+        <m.div
           key="intro"
           className="fixed inset-0 z-[95] flex items-center justify-center bg-surface text-ink"
           exit={{ opacity: 0, transition: { duration: 0.45, ease: 'easeOut' } }}
@@ -53,7 +53,7 @@ export function Intro() {
           </button>
           <div className="relative flex size-64 items-center justify-center" aria-hidden>
             {/* drop */}
-            <motion.span
+            <m.span
               className="absolute top-0 left-1/2 block h-5 w-3.5 -translate-x-1/2 rounded-[50%_50%_50%_50%/60%_60%_40%_40%] bg-mid"
               initial={{ y: -220, opacity: 0, scaleY: 1.3 }}
               animate={{ y: 120, opacity: [0, 1, 1, 0], scaleY: [1.3, 1.3, 1, 0.4] }}
@@ -61,7 +61,7 @@ export function Intro() {
             />
             {/* rings */}
             {[0, 1, 2].map((i) => (
-              <motion.span
+              <m.span
                 key={i}
                 className="absolute top-[132px] left-1/2 block h-6 w-16 -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-mid"
                 initial={{ scale: 0, opacity: 0 }}
@@ -69,16 +69,16 @@ export function Intro() {
                 transition={{ duration: 1.1, delay: 0.55 + i * 0.13, ease: EXPO }}
               />
             ))}
-            <motion.span
+            <m.span
               className="font-display absolute top-[150px] text-sm font-bold tracking-[0.4em] text-mid rtl:text-xl rtl:tracking-normal"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.6, ease: EXPO }}
             >
               {t.intro}
-            </motion.span>
+            </m.span>
           </div>
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   )

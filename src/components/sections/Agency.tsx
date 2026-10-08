@@ -34,7 +34,7 @@ export function Agency() {
             scrollTrigger: { trigger: q('[data-title]')[0], start: 'top 85%' },
           })
           // statement: word by word, scrubbed with scroll
-          const st = SplitText.create(q('[data-statement]'), { type: 'words' })
+          const st = SplitText.create(q('[data-statement]'), { type: 'words', aria: 'none' })
           gsap.fromTo(
             st.words,
             { opacity: 0.12, filter: 'blur(4px)' },
@@ -43,12 +43,14 @@ export function Agency() {
               filter: 'blur(0px)',
               ease: 'power2.inOut',
               stagger: 0.12,
-              scrollTrigger: { trigger: q('[data-statement]')[0], start: 'top 82%', end: 'bottom 45%', scrub: 0.6 },
+              // dim state only applies once it enters the viewport (keeps it readable before / for audits)
+              immediateRender: false,
+              scrollTrigger: { trigger: q('[data-statement]')[0], start: 'top bottom', end: 'bottom 45%', scrub: 0.6 },
             },
           )
           // supporting paragraphs: line by line
           q('[data-para]').forEach((p) => {
-            const s = SplitText.create(p, { type: 'lines', mask: 'lines', linesClass: 'split-mask' })
+            const s = SplitText.create(p, { type: 'lines', mask: 'lines', linesClass: 'split-mask', aria: 'none' })
             gsap.from(s.lines, {
               yPercent: 100,
               opacity: 0,
@@ -76,7 +78,7 @@ export function Agency() {
       id="agency"
       ref={root}
       aria-labelledby="agency-title"
-      className="relative z-10 -mt-[70svh] pt-[18vh] pb-[16vh] ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)]"
+      className="relative z-10 pt-[18vh] pb-[16vh] motion-safe:-mt-[45svh] ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)]"
     >
       <p className="kicker" data-fade>
         <span dir="ltr">{t.agency.index}</span> / {t.agency.kicker}
@@ -93,17 +95,22 @@ export function Agency() {
 
       <div className="mt-[12vh] grid gap-12 lg:grid-cols-12">
         <p
-          data-statement
           className={`font-display font-semibold lg:col-span-7 ${
             isRTL ? 'text-[clamp(1.9rem,4.2vw,3.6rem)] leading-[1.45]' : 'text-[clamp(2rem,4.4vw,4rem)] leading-[1.05] tracking-[-0.02em]'
           }`}
         >
-          {t.agency.statement}
+          <span className="sr-only">{t.agency.statement}</span>
+          <span data-statement aria-hidden className="block">
+            {t.agency.statement}
+          </span>
         </p>
         <div className="flex flex-col gap-6 text-[1.06rem] text-muted lg:col-span-4 lg:col-start-9 lg:pt-3" data-fade>
           {t.agency.paragraphs.map((p, i) => (
-            <p key={i} data-para className="max-w-[38ch]">
-              {p}
+            <p key={i} className="max-w-[38ch]">
+              <span className="sr-only">{p}</span>
+              <span data-para aria-hidden className="block">
+                {p}
+              </span>
             </p>
           ))}
           <div data-cta className="mt-4">

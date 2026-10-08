@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { AnimatePresence, motion, useMotionValue, useSpring } from 'motion/react'
+import { AnimatePresence, m, useMotionValue, useSpring } from 'motion/react'
 import { gsap, useGSAP } from '../../lib/gsap'
 import { useLang } from '../../lib/i18n'
 import { useFinePointer, useReducedMotion } from '../../lib/hooks'
@@ -117,7 +117,7 @@ export function Work() {
         {/* bioluminescent glow following the cursor */}
         {fine && !reduced && (
           <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-          <motion.span
+          <m.span
             aria-hidden
             className="pointer-events-none absolute top-0 left-0 -z-0 size-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
@@ -194,14 +194,14 @@ export function Work() {
 
       {/* floating preview card */}
       {fine && !reduced && (
-        <motion.div
+        <m.div
           aria-hidden
           className="pointer-events-none fixed top-0 left-0 z-50 hidden md:block"
           style={{ x: cardX, y: cardY }}
         >
           <AnimatePresence>
             {active !== null && (
-              <motion.div
+              <m.div
                 key={projects[active].name}
                 className="absolute -top-[140px] left-8 flex h-[280px] w-[380px] items-end overflow-hidden rounded-2xl p-6"
                 style={{
@@ -220,16 +220,16 @@ export function Work() {
                 <span dir="ltr" className="absolute top-5 right-6 text-xs text-white/70 tabular-nums">
                   {projects[active].year}
                 </span>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
-        </motion.div>
+        </m.div>
       )}
 
       {/* portal: circle wipe, then the real project opens in a new tab */}
       <AnimatePresence>
         {portal && (
-          <motion.div
+          <m.div
             key="portal"
             aria-hidden
             className="fixed inset-0 z-[90] flex items-center justify-center"
@@ -255,7 +255,7 @@ export function Work() {
             <span className="font-display text-[clamp(3rem,10vw,9rem)] font-extrabold tracking-[-0.03em] text-white">
               {portal.project.name}
             </span>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </section>

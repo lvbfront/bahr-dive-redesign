@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, m } from 'motion/react'
 import { useLang } from '../../lib/i18n'
 
 export function LangToggle() {
@@ -12,7 +12,7 @@ export function LangToggle() {
       data-cursor
     >
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span
+        <m.span
           key={lang}
           lang={lang === 'en' ? 'ar' : 'en'}
           initial={{ y: '110%', opacity: 0 }}
@@ -21,7 +21,7 @@ export function LangToggle() {
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         >
           {t.nav.lang === 'AR' ? 'ع' : 'EN'}
-        </motion.span>
+        </m.span>
       </AnimatePresence>
     </button>
   )

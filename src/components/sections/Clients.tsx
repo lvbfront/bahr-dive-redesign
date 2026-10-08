@@ -126,7 +126,7 @@ export function Clients() {
                   {s.value}
                 </span>
               ) : (
-                <span className="text-[0.62em]">{s.text}</span>
+                <span className="text-[0.62em] whitespace-nowrap rtl:text-[0.5em]">{s.text}</span>
               )}
             </dd>
           </div>

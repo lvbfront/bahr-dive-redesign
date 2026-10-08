@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { LazyMotion } from 'motion/react'
 import { ScrollTrigger } from './lib/gsap'
 import { useLang } from './lib/i18n'
 import { useReducedMotion } from './lib/hooks'
@@ -18,6 +19,8 @@ import { Work } from './components/sections/Work'
 import { Contact } from './components/sections/Contact'
 import { Footer } from './components/sections/Footer'
 
+const loadMotionFeatures = () => import('./lib/motion-features').then((r) => r.default)
+
 export default function App() {
   const { t, lang } = useLang()
   const reduced = useReducedMotion()
@@ -32,6 +35,7 @@ export default function App() {
   }, [])
 
   return (
+    <LazyMotion features={loadMotionFeatures} strict>
     <SmoothScroll>
       <a href="#main" className="skip-link">
         {t.a11y.skip}
@@ -53,5 +57,6 @@ export default function App() {
       <DiveController />
       <Cursor />
     </SmoothScroll>
+    </LazyMotion>
   )
 }
