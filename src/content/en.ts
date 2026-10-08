@@ -1,6 +1,9 @@
 // All user-facing English copy. Sourced from https://bybahr.com/en/ (see CLAUDE.md → Decisions).
 
 export const SITE_URL = 'https://bybahr.com/en/'
+/** Bahr's own work index ("All eight projects") */
+export const WORK_URL = 'https://bybahr.com/work/index.html'
+const work = (slug: string) => `https://bybahr.com/work/${slug}/index.html`
 export const EMAIL = 'dive@b7r.agency'
 export const LINKEDIN = 'https://www.linkedin.com/company/bybahr'
 
@@ -11,6 +14,8 @@ export type Project = {
   note?: string
   year: string
   href: string
+  /** shown as a large row in Selected work (only projects with a verified case-study page) */
+  featured?: boolean
   /** two colours for the abstract preview gradient */
   hue: [string, string]
 }
@@ -31,7 +36,8 @@ const en = {
     opensNewTab: '(opens in a new tab)',
     home: 'Bahr — back to the surface',
   },
-  brand: { en: 'BAHR', ar: 'بحر' },
+  /** Bahr's wordmark: "BAHR." */
+  brand: { word: 'BAHR', dot: '.' },
   nav: {
     links: [
       { id: 'top', label: 'Home' },
@@ -47,7 +53,7 @@ const en = {
     unit: 'm',
     labels: ['Surface', 'The agency', 'In good company', 'Expertise', 'Selected work', 'Seabed'],
   },
-  intro: 'Bahr',
+  intro: 'BAHR.',
   hero: {
     lines: ['A deeper', 'creative', 'approach'],
     meta: 'Independent digital agency — Jeddah, Saudi Arabia',
@@ -111,14 +117,14 @@ const en = {
     all: 'All eight projects',
     open: 'Open project',
     projects: [
-      { name: 'Alageely', sector: 'Legal authority', year: '2025', href: SITE_URL, hue: ['#2c5d73', '#5ff2e6'] },
-      { name: 'Riyadh Retina', sector: 'Elite healthcare', year: '2025', href: SITE_URL, hue: ['#0e2a3a', '#9fb7c4'] },
-      { name: 'Sycleague', sector: 'Sports tech', year: '2025', href: SITE_URL, hue: ['#123a52', '#7fd6c9'] },
-      { name: 'QVS', sector: 'SaaS platform', year: '2025', href: SITE_URL, hue: ['#08202e', '#3fa7b5'] },
-      { name: 'Parkinly', sector: 'Mobile app', note: 'Unreleased', year: '2025', href: SITE_URL, hue: ['#1b4a5e', '#c6e7e3'] },
-      { name: 'Secure Steps', sector: 'Corporate', year: '2025', href: SITE_URL, hue: ['#0b2230', '#6fb3c4'] },
-      { name: 'MASS', sector: 'Private security', year: '2026', href: SITE_URL, hue: ['#050b12', '#2c5d73'] },
-      { name: 'LineUp', sector: 'Live entertainment', year: '2026', href: SITE_URL, hue: ['#14324a', '#5ff2e6'] },
+      { name: 'Alageely', sector: 'Legal authority', year: '2025', href: work('alageely'), featured: true, hue: ['#0f2a7a', '#5b82f5'] },
+      { name: 'Riyadh Retina', sector: 'Elite healthcare', year: '2025', href: work('riyadh-retina'), featured: true, hue: ['#0e2a3a', '#3d6cf0'] },
+      { name: 'Sycleague', sector: 'Sports tech', year: '2025', href: work('sycleague'), featured: true, hue: ['#1e40a8', '#8aa4ff'] },
+      { name: 'QVS', sector: 'SaaS platform', year: '2025', href: WORK_URL, hue: ['#08202e', '#3d6cf0'] },
+      { name: 'Parkinly', sector: 'Mobile app', note: 'Unreleased', year: '2025', href: WORK_URL, hue: ['#1b2f6e', '#9fb7c4'] },
+      { name: 'Secure Steps', sector: 'Corporate', year: '2025', href: WORK_URL, hue: ['#0b2230', '#1e40a8'] },
+      { name: 'MASS', sector: 'Private security', year: '2026', href: WORK_URL, hue: ['#050b12', '#1e40a8'] },
+      { name: 'LineUp', sector: 'Live entertainment', year: '2026', href: work('lineup'), featured: true, hue: ['#14246a', '#7f9dff'] },
     ] as Project[],
   },
   contact: {

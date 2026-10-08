@@ -40,7 +40,7 @@ darkens to near black, a live depth meter counts down, and the contact call to a
   visual: flowing current lines (web), glowing plankton nodes (AI), and a phone with sonar rings (mobile). On mobile
   the panels become accordion cards with Framer Motion layout animation.
 - **Selected work.**
-  - Hovering a project row shows a bioluminescent glow that follows the cursor, plus a floating preview card.
+  - Hovering a project row shows a royal-blue glow that follows the cursor, plus a floating preview card.
   - Clicking plays a circle-wipe "portal" and then opens the project on bybahr.com in a new tab.
 - **Seabed.**
   - The giant line "Let's dive deeper." sits here, and the depth meter pulses once at −3,000 m.

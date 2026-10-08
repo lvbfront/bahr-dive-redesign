@@ -54,7 +54,7 @@ export function Intro() {
           <div className="relative flex size-64 items-center justify-center" aria-hidden>
             {/* drop */}
             <m.span
-              className="absolute top-0 left-1/2 block h-5 w-3.5 -translate-x-1/2 rounded-[50%_50%_50%_50%/60%_60%_40%_40%] bg-mid"
+              className="absolute top-0 left-1/2 block h-5 w-3.5 -translate-x-1/2 rounded-[50%_50%_50%_50%/60%_60%_40%_40%] bg-glow"
               initial={{ y: -220, opacity: 0, scaleY: 1.3 }}
               animate={{ y: 120, opacity: [0, 1, 1, 0], scaleY: [1.3, 1.3, 1, 0.4] }}
               transition={{ duration: 0.6, ease: [0.55, 0, 1, 0.45], times: [0, 0.1, 0.9, 1] }}
@@ -63,19 +63,22 @@ export function Intro() {
             {[0, 1, 2].map((i) => (
               <m.span
                 key={i}
-                className="absolute top-[132px] left-1/2 block h-6 w-16 -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-mid"
+                className="absolute top-[132px] left-1/2 block h-6 w-16 -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-glow"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: [0, 4.5], opacity: [0.9, 0] }}
                 transition={{ duration: 1.1, delay: 0.55 + i * 0.13, ease: EXPO }}
               />
             ))}
             <m.span
-              className="font-display absolute top-[150px] text-sm font-bold tracking-[0.4em] text-mid rtl:text-xl rtl:tracking-normal"
+              dir="ltr"
+              lang="en"
+              className="font-display absolute top-[150px] text-2xl font-extrabold tracking-[0.02em] text-ink"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.6, ease: EXPO }}
             >
-              {t.intro}
+              {t.intro.slice(0, -1)}
+              <span className="text-glow">{t.intro.slice(-1)}</span>
             </m.span>
           </div>
         </m.div>

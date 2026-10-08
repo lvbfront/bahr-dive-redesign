@@ -101,7 +101,7 @@ export function Clients() {
                     key={`${k}-${name}`}
                     className={`group flex shrink-0 items-center gap-[clamp(1.5rem,4vw,4rem)] pe-[clamp(1.5rem,4vw,4rem)] ${r === 1 ? 'text-muted' : ''}`}
                   >
-                    <span className="font-display cursor-default text-[clamp(2.6rem,7.5vw,7.5rem)] leading-none font-bold tracking-[-0.03em] transition-[color,text-shadow] duration-500 hover:text-glow hover:[text-shadow:0_0_32px_rgba(95,242,230,0.55)]">
+                    <span className="font-display cursor-default text-[clamp(2.6rem,7.5vw,7.5rem)] leading-none font-bold tracking-[-0.03em] transition-[color,text-shadow] duration-500 hover:text-glow-bright hover:[text-shadow:0_0_32px_rgba(61,108,240,0.8)]">
                       {name}
                     </span>
                     <span className="size-2.5 rounded-full border border-current opacity-50" />

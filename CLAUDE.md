@@ -36,7 +36,9 @@ Lenis (driven by the GSAP ticker), React Three Fiber + drei (lazy-loaded hero wa
 ## Design tokens
 - surface `#e6e6df`, ink `#0b0f14`
 - depth gradient `#e6e6df → #9fb7c4 → #2c5d73 → #0e2a3a → #050b12`
-- bioluminescent accent `#5ff2e6` (sparingly)
+- accent: Bahr royal blue `#1e40a8` (fills, buttons, the wordmark dot on light water) + bright tint `#8aa4ff`
+  (`glow-bright`, text/glows on deep water for contrast); brand gradient `.bg-brand` `#0f2a7a → #1e40a8 → #3d6cf0 → #6b8cff`
+- logo: Bahr's **"BAHR."** wordmark (Syne 800, accent-coloured dot via `--accent-ink`, which follows the depth tone)
 - Fonts: **Syne** (display, EN headlines), **IBM Plex Sans Arabic** (Arabic + body). Self-hosted in `public/fonts`, preloaded.
 
 ## Folder structure
@@ -77,12 +79,16 @@ src/
   across Saudi Arabia and the GCC"; "aesthetic mastery with engineering precision"; web stack React / Next.js / WebGL.
 - **Client names.** The run-together text "QVSParkinly" is two projects: **QVS** and **Parkinly** (not "QVSpark"/"Inly").
   The "In good company" marquee uses these eight names (the site presents its client work as these projects).
-- **Project links.** Individual case-study URLs could not be verified, so every project links to
-  `https://bybahr.com/en/` (each has its own `href` field in `src/content/en.ts` — swap in the case-study URL when known).
+- **Project links** (provided by the owner): Alageely, Riyadh Retina, Sycleague and LineUp link to their case studies at
+  `https://bybahr.com/work/<slug>/index.html` and are the four `featured` rows in Selected work; "All eight projects"
+  (and the four non-featured projects' `href`) → `https://bybahr.com/work/index.html`.
+- **Brand recognition.** Per the owner: the logo is Bahr's "BAHR." wordmark and the accent is Bahr's royal blue
+  (≈ `#1e40a8`, from their hero gradient), replacing the earlier cyan. On deep water the blue is used as a lighter tint
+  (`#8aa4ff`) wherever it carries text, so contrast stays ≥ 3:1 for large text.
 - **Supporting copy** (agency paragraphs, service descriptions, contact line) is composed only from the verified facts
   above, lightly edited for flow. No invented clients, numbers or awards.
 - **Stats:** 8 selected projects · 3 disciplines · Saudi Arabia & the Gulf.
-- **Work rows** show the first four projects; "All eight projects ↗" links to the site.
+- **Work rows** show the four featured projects; "All eight projects ↗" links to Bahr's work index.
 - **Depth mapping.** Meter depth and background colour are piecewise-linear between section anchors (section top hits
   viewport top), not linear in pixels, so each section "is" its depth.
 - **Text colour** flips ink → light based on the luminance of the current background (threshold keeps ≥4.5:1 contrast).

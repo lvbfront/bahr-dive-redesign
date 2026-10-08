@@ -9,5 +9,5 @@
   </defs>
   <rect width="64" height="64" rx="16" fill="url(#d)"/>
   <path d="M8 21c6-4 10-4 16 0s10 4 16 0 10-4 16 0" fill="none" stroke="#0b0f14" stroke-width="3" stroke-linecap="round"/>
-  <circle cx="32" cy="46" r="5" fill="#5ff2e6"/>
+  <circle cx="32" cy="46" r="5" fill="#3d6cf0"/>
 </svg>

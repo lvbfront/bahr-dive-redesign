@@ -63,7 +63,7 @@ export function DepthMeter() {
             <m.span
               animate={pulse}
               className="absolute -start-[5px] -top-[5px] block size-[11px] rounded-full border border-current bg-[var(--fg-inverse)]"
-              style={{ boxShadow: seabed ? '0 0 18px 2px #5ff2e6' : 'none', borderColor: seabed ? '#5ff2e6' : undefined }}
+              style={{ boxShadow: seabed ? '0 0 18px 2px #3d6cf0' : 'none', borderColor: seabed ? '#8aa4ff' : undefined }}
             />
           </div>
         </div>
@@ -79,7 +79,7 @@ export function DepthMeter() {
       {/* mobile: compact pill bottom inline-start */}
       <div className="fixed bottom-4 start-4 flex items-center gap-2 rounded-full border border-[var(--line)] px-3 py-1.5 text-xs backdrop-blur-md md:hidden">
         <span className="relative flex size-2">
-          <span className={`absolute inset-0 rounded-full ${seabed ? 'bg-glow' : 'bg-current'}`} />
+          <span className={`absolute inset-0 rounded-full ${seabed ? 'bg-glow-bright' : 'bg-current'}`} />
         </span>
         <span dir="ltr" className="font-display tabular-nums font-semibold">
           <span ref={(el) => void (el && (numRefs.current[1] = el))}>0</span> {unit}

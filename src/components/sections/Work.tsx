@@ -3,7 +3,7 @@ import { AnimatePresence, m, useMotionValue, useSpring } from 'motion/react'
 import { gsap, useGSAP } from '../../lib/gsap'
 import { useLang } from '../../lib/i18n'
 import { useFinePointer, useReducedMotion } from '../../lib/hooks'
-import { SITE_URL, type Project } from '../../content/en'
+import { WORK_URL, type Project } from '../../content/en'
 
 const EXPO = [0.16, 1, 0.3, 1] as const
 type Portal = { x: number; y: number; project: Project; phase: 'in' | 'out' }
@@ -33,7 +33,7 @@ export function Work() {
   const cardX = useSpring(cx, { stiffness: 160, damping: 22, mass: 0.6 })
   const cardY = useSpring(cy, { stiffness: 160, damping: 22, mass: 0.6 })
 
-  const projects = t.work.projects.slice(0, 4)
+  const projects = t.work.projects.filter((p) => p.featured)
 
   useGSAP(
     () => {
@@ -123,7 +123,7 @@ export function Work() {
             style={{
               x: glowX,
               y: glowY,
-              background: 'radial-gradient(circle, rgba(95,242,230,0.28) 0%, rgba(95,242,230,0.08) 35%, transparent 68%)',
+              background: 'radial-gradient(circle, rgba(61,108,240,0.38) 0%, rgba(30,64,168,0.12) 35%, transparent 68%)',
             }}
             animate={{ opacity: active === null ? 0 : 1 }}
             transition={{ duration: 0.5 }}
@@ -150,7 +150,7 @@ export function Work() {
               </span>
               <span data-rin className="col-start-2 row-start-1 block min-w-0">
                 <span
-                  className={`font-display block text-[clamp(2.1rem,6.5vw,6rem)] leading-[1] font-bold tracking-[-0.03em] transition-[color,translate,text-shadow,opacity] duration-500 ease-[var(--ease-expo)] group-hover:translate-x-3 group-hover:text-glow group-hover:[text-shadow:0_0_40px_rgba(95,242,230,0.45)] rtl:group-hover:-translate-x-3 ${
+                  className={`font-display block text-[clamp(2.1rem,6.5vw,6rem)] leading-[1] font-bold tracking-[-0.03em] transition-[color,translate,text-shadow,opacity] duration-500 ease-[var(--ease-expo)] group-hover:translate-x-3 group-hover:text-glow-bright group-hover:[text-shadow:0_0_40px_rgba(61,108,240,0.7)] rtl:group-hover:-translate-x-3 ${
                     active !== null && active !== i ? 'opacity-35' : ''
                   }`}
                 >
@@ -165,7 +165,7 @@ export function Work() {
                 <span className="hidden sm:inline">{p.year}</span>
                 <span
                   aria-hidden
-                  className="flex size-10 shrink-0 items-center justify-center rounded-full border border-current transition-colors duration-300 group-hover:border-glow group-hover:bg-glow group-hover:text-ink rtl:-scale-x-100"
+                  className="flex size-10 shrink-0 items-center justify-center rounded-full border border-current transition-colors duration-300 group-hover:border-glow group-hover:bg-glow group-hover:text-white rtl:-scale-x-100"
                 >
                   ↗
                 </span>
@@ -178,7 +178,7 @@ export function Work() {
 
       <div className="mt-12 flex justify-end">
         <a
-          href={SITE_URL}
+          href={WORK_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="group inline-flex items-center gap-3 border-b border-current pb-1 text-lg font-medium"
@@ -206,7 +206,7 @@ export function Work() {
                 className="absolute -top-[140px] left-8 flex h-[280px] w-[380px] items-end overflow-hidden rounded-2xl p-6"
                 style={{
                   background: `radial-gradient(120% 90% at 20% 10%, ${projects[active].hue[1]} 0%, transparent 55%), radial-gradient(90% 90% at 90% 100%, ${projects[active].hue[1]}55 0%, transparent 60%), ${projects[active].hue[0]}`,
-                  boxShadow: '0 30px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(95,242,230,0.25)',
+                  boxShadow: '0 30px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(138,164,255,0.3)',
                 }}
                 initial={{ opacity: 0, scale: 0.85, rotate: -4, filter: 'blur(8px)' }}
                 animate={{ opacity: 1, scale: 1, rotate: 0, filter: 'blur(0px)' }}

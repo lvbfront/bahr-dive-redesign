@@ -136,7 +136,7 @@ function HorizontalExpertise() {
         ))}
       </div>
       <div className="absolute inset-x-[calc(var(--gutter)+var(--rail))] bottom-8 h-px bg-[var(--line)]">
-        <div data-progress className="h-full origin-left bg-glow rtl:origin-right" />
+        <div data-progress className="h-full origin-left bg-glow-bright rtl:origin-right" />
       </div>
     </div>
   )

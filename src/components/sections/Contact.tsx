@@ -58,7 +58,7 @@ export function Contact() {
         className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%]"
         style={{
           background:
-            'radial-gradient(60% 50% at 70% 100%, rgba(95,242,230,0.10), transparent 70%), radial-gradient(40% 40% at 15% 100%, rgba(44,93,115,0.35), transparent 70%)',
+            'radial-gradient(60% 50% at 70% 100%, rgba(61,108,240,0.16), transparent 70%), radial-gradient(40% 40% at 15% 100%, rgba(44,93,115,0.35), transparent 70%)',
         }}
       />
       <p className="kicker relative">{t.contact.kicker} — <span dir="ltr">−3,000 {t.depth.unit}</span></p>
@@ -72,7 +72,7 @@ export function Contact() {
           }`}
         >
           {t.contact.title.map((l, i) => (
-            <span key={`${lang}-${i}`} data-line className={`block ${i === 1 ? 'text-glow' : ''}`}>
+            <span key={`${lang}-${i}`} data-line className={`block ${i === 1 ? 'text-glow-bright' : ''}`}>
               {l}
             </span>
           ))}
@@ -82,14 +82,14 @@ export function Contact() {
           <Magnetic strength={0.4}>
             <a
               href={`mailto:${EMAIL}`}
-              className="group relative flex size-[clamp(11rem,22vw,17rem)] items-center justify-center overflow-hidden rounded-full bg-glow text-ink shadow-[0_0_80px_-10px_rgba(95,242,230,0.6)] transition-[box-shadow] duration-500 hover:shadow-[0_0_120px_0px_rgba(95,242,230,0.7)]"
+              className="group relative flex size-[clamp(11rem,22vw,17rem)] items-center justify-center overflow-hidden rounded-full bg-brand text-white shadow-[0_0_80px_-10px_rgba(61,108,240,0.75)] transition-[box-shadow] duration-500 hover:shadow-[0_0_120px_0px_rgba(61,108,240,0.85)]"
               data-cursor
             >
               <span aria-hidden className="absolute inset-0 opacity-60 transition-opacity duration-500 group-hover:opacity-100">
                 {BUBBLES.map((b, i) => (
                   <span
                     key={i}
-                    className="bubble !border-ink/40"
+                    className="bubble"
                     style={
                       {
                         left: b.l,
@@ -122,7 +122,7 @@ export function Contact() {
           <div className="flex flex-col gap-1">
             <dt className="text-xs uppercase tracking-[0.2em] text-muted rtl:tracking-normal">{t.contact.emailLabel}</dt>
             <dd>
-              <a href={`mailto:${EMAIL}`} dir="ltr" className="font-display text-[clamp(1.4rem,2.6vw,2.2rem)] font-semibold hover:text-glow" data-cursor>
+              <a href={`mailto:${EMAIL}`} dir="ltr" className="font-display text-[clamp(1.4rem,2.6vw,2.2rem)] font-semibold hover:text-glow-bright" data-cursor>
                 {EMAIL}
               </a>
             </dd>
@@ -130,7 +130,7 @@ export function Contact() {
           <div className="flex flex-col gap-1">
             <dt className="text-xs uppercase tracking-[0.2em] text-muted rtl:tracking-normal">{t.contact.linkedinLabel}</dt>
             <dd>
-              <a href={LINKEDIN} target="_blank" rel="noopener noreferrer" className="text-lg underline-offset-4 hover:text-glow hover:underline" data-cursor>
+              <a href={LINKEDIN} target="_blank" rel="noopener noreferrer" className="text-lg underline-offset-4 hover:text-glow-bright hover:underline" data-cursor>
                 linkedin.com/company/bybahr <span className="sr-only">{t.a11y.opensNewTab}</span>
               </a>
             </dd>

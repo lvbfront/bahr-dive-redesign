@@ -30,7 +30,9 @@
   --color-mid: #2c5d73;
   --color-deep: #0e2a3a;
   --color-abyss: #050b12;
-  --color-glow: #5ff2e6;
+  /* Bahr royal blue (brand accent) + a bright tint of the same hue for text/glows on deep water */
+  --color-glow: #1e40a8;
+  --color-glow-bright: #8aa4ff;
 
   --font-display: 'Syne', 'Plex Arabic', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Plex Arabic', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -46,6 +48,7 @@
   --fg-muted: rgb(11 15 20 / 0.62);
   --line: rgb(11 15 20 / 0.18);
   --fg-inverse: #e6e6df;
+  --accent-ink: #1e40a8;
   --depth: 0;
   --gutter: clamp(1.25rem, 4vw, 3.5rem);
   --rail: clamp(0px, 6vw, 5.5rem);
@@ -55,6 +58,7 @@
   --fg-muted: rgb(233 237 233 / 0.68);
   --line: rgb(233 237 233 / 0.2);
   --fg-inverse: #0b0f14;
+  --accent-ink: #8aa4ff;
 }
 
 html {
@@ -95,17 +99,17 @@ body {
 
 ::selection {
   background: var(--color-glow);
-  color: var(--color-ink);
+  color: #ffffff;
 }
 
 /* focus-visible everywhere, readable at every depth */
 :focus-visible {
-  outline: 2px solid var(--color-glow);
+  outline: 2px solid var(--color-glow-bright);
   outline-offset: 4px;
   border-radius: 4px;
 }
 :root:not([data-tone='light']) :focus-visible {
-  outline-color: #0b5f73;
+  outline-color: var(--color-glow);
 }
 
 .font-display {
@@ -219,8 +223,8 @@ body {
   position: absolute;
   inset-block-end: 8%;
   border-radius: 9999px;
-  border: 1px solid rgb(95 242 230 / 0.7);
-  background: radial-gradient(circle at 30% 30%, rgb(255 255 255 / 0.6), rgb(95 242 230 / 0.08) 60%);
+  border: 1px solid rgb(255 255 255 / 0.65);
+  background: radial-gradient(circle at 30% 30%, rgb(255 255 255 / 0.7), rgb(138 164 255 / 0.12) 60%);
   animation: bubble-rise var(--t, 3s) ease-in infinite;
   animation-delay: var(--delay, 0s);
 }
@@ -324,4 +328,12 @@ html.has-cursor button {
 /* Latin brand marks keep the display face inside Arabic pages */
 [lang='ar'] [lang='en'] {
   --font-display: 'Syne', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Brand gradient (royal blue, as in Bahr's hero) */
+.bg-brand {
+  background: linear-gradient(135deg, #0f2a7a 0%, #1e40a8 45%, #3d6cf0 85%, #6b8cff 100%);
+}
+.text-accent {
+  color: var(--accent-ink);
 }

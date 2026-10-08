@@ -15,7 +15,7 @@ export function CurrentLines({ active }: { active: boolean }) {
           key={i}
           d={d}
           fill="none"
-          stroke={i === 4 ? '#5ff2e6' : 'currentColor'}
+          stroke={i === 4 ? '#6b8cff' : 'currentColor'}
           strokeOpacity={i === 4 ? 0.9 : 0.18 + (i % 3) * 0.08}
           strokeWidth={i === 4 ? 1.6 : 1}
           strokeDasharray={i % 2 ? '60 340' : '140 260'}
@@ -72,7 +72,7 @@ export function PlanktonNodes({ active }: { active: boolean }) {
           const b = nodes[j]
           const d = Math.hypot(a.x - b.x, a.y - b.y)
           if (d < 110) {
-            ctx.strokeStyle = a.glow || b.glow ? `rgba(95,242,230,${(1 - d / 110) * 0.6})` : color
+            ctx.strokeStyle = a.glow || b.glow ? `rgba(107,140,255,${(1 - d / 110) * 0.6})` : color
             ctx.globalAlpha = a.glow || b.glow ? 1 : (1 - d / 110) * 0.35
             ctx.beginPath()
             ctx.moveTo(a.x, a.y)
@@ -83,9 +83,9 @@ export function PlanktonNodes({ active }: { active: boolean }) {
       ctx.globalAlpha = 1
       for (const n of nodes) {
         if (n.glow) {
-          ctx.shadowColor = '#5ff2e6'
+          ctx.shadowColor = '#6b8cff'
           ctx.shadowBlur = 14
-          ctx.fillStyle = '#5ff2e6'
+          ctx.fillStyle = '#6b8cff'
         } else {
           ctx.shadowBlur = 0
           ctx.fillStyle = color
@@ -112,7 +112,7 @@ export function SonarPhone({ active }: { active: boolean }) {
           key={i}
           className="absolute aspect-square w-[34%] rounded-full border"
           style={{
-            borderColor: i === 0 ? 'rgba(95,242,230,0.8)' : 'currentColor',
+            borderColor: i === 0 ? 'rgba(107,140,255,0.8)' : 'currentColor',
             opacity: 0.5,
             animation: 'sonar 4.2s cubic-bezier(0.16,1,0.3,1) infinite',
             animationDelay: `${i * 1.05}s`,
@@ -122,7 +122,7 @@ export function SonarPhone({ active }: { active: boolean }) {
       <svg viewBox="0 0 120 230" className="relative h-[62%] w-auto">
         <rect x="4" y="4" width="112" height="222" rx="22" fill="none" stroke="currentColor" strokeWidth="2" />
         <rect x="42" y="14" width="36" height="7" rx="3.5" fill="currentColor" opacity="0.6" />
-        <circle cx="60" cy="118" r="5" fill="#5ff2e6" style={{ animation: 'node-pulse 2.1s ease-in-out infinite' }} />
+        <circle cx="60" cy="118" r="5" fill="#6b8cff" style={{ animation: 'node-pulse 2.1s ease-in-out infinite' }} />
         <line x1="44" y1="210" x2="76" y2="210" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
       </svg>
     </div>

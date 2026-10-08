@@ -43,13 +43,12 @@ export function Nav() {
         aria-label="Primary"
         className="flex items-center justify-between gap-6 py-5 ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)]"
       >
-        <a href="#top" onClick={go('top')} aria-label={t.a11y.home} className="group flex items-baseline gap-2" data-cursor>
-          <span className="font-display text-lg font-extrabold tracking-[0.12em]" lang="en">
-            {t.brand.en}
-          </span>
-          <span className="text-muted">/</span>
-          <span className="text-lg font-bold" lang="ar">
-            {t.brand.ar}
+        <a href="#top" onClick={go('top')} aria-label={t.a11y.home} className="group flex items-baseline" data-cursor>
+          <span dir="ltr" lang="en" className="font-display text-[1.35rem] leading-none font-extrabold tracking-[0.02em]">
+            {t.brand.word}
+            <span className="text-accent inline-block transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-y-[-0.12em]">
+              {t.brand.dot}
+            </span>
           </span>
         </a>
 

@@ -19,7 +19,7 @@ meter counts down, and the contact call to action waits on the seabed at −3,00
 - One scroll-driven dive system that controls colour, light rays, marine snow, text contrast and the depth meter.
 - Client names that drift like currents and react to scroll speed.
 - A pinned horizontal expertise journey with hand-made animated visuals.
-- Project rows with a bioluminescent hover, a floating preview and a circle-wipe portal to each case study.
+- Project rows with a royal-blue glow on hover, a floating preview and a circle-wipe portal to each case study.
 - A seabed contact section with a bubbling, magnetic email button.
 - Full Arabic/RTL with mirrored layout and motion.
 - A complete reduced-motion version, keyboard and screen-reader support.
