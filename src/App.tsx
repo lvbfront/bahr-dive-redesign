@@ -11,6 +11,8 @@ import { MarineSnow } from './components/dive/MarineSnow'
 import { Nav } from './components/ui/Nav'
 import { Cursor } from './components/ui/Cursor'
 import { Intro } from './components/ui/Intro'
+import { LangVeil } from './components/ui/LangVeil'
+import { ErrorBoundary, StaticFallback } from './components/ui/ErrorBoundary'
 import { Hero } from './components/hero/Hero'
 import { Agency } from './components/sections/Agency'
 import { Clients } from './components/sections/Clients'
@@ -21,26 +23,30 @@ import { Footer } from './components/sections/Footer'
 
 const loadMotionFeatures = () => import('./lib/motion-features').then((r) => r.default)
 
-export default function App() {
-  const { t, lang } = useLang()
+/**
+ * Everything GSAP touches (SplitText, pins, ScrollTriggers) lives in here. It is keyed by language, so a switch
+ * unmounts it — every useGSAP context reverts its splits and pin-spacers with its component — and mounts a fresh
+ * tree for the new direction. React never has to diff DOM that GSAP rewrote.
+ */
+function Page() {
+  const { t, phase, onPageReady } = useLang()
   const reduced = useReducedMotion()
 
-  // Re-measure every trigger after a language/direction swap and once fonts have loaded.
+  // After a language switch: children have created their triggers → measure, restore position, reveal.
   useEffect(() => {
-    const id = requestAnimationFrame(() => ScrollTrigger.refresh())
+    if (phase !== 'covered') return
+    let id = requestAnimationFrame(() => {
+      id = requestAnimationFrame(onPageReady)
+    })
     return () => cancelAnimationFrame(id)
-  }, [lang])
-  useEffect(() => {
-    document.fonts?.ready.then(() => ScrollTrigger.refresh())
+    // runs once per freshly keyed tree
   }, [])
 
   return (
-    <LazyMotion features={loadMotionFeatures} strict>
-    <SmoothScroll>
+    <>
       <a href="#main" className="skip-link">
         {t.a11y.skip}
       </a>
-      <Intro />
       <LightRays />
       {!reduced && <MarineSnow />}
       <Nav />
@@ -55,8 +61,31 @@ export default function App() {
       </main>
       <Footer />
       <DiveController />
-      <Cursor />
-    </SmoothScroll>
+    </>
+  )
+}
+
+export default function App() {
+  const { t, lang } = useLang()
+
+  useEffect(() => {
+    document.fonts?.ready.then(() => ScrollTrigger.refresh())
+  }, [])
+
+  return (
+    <LazyMotion features={loadMotionFeatures} strict>
+      <SmoothScroll>
+        <Intro />
+        <ErrorBoundary
+          key={lang}
+          fallback={<StaticFallback title={t.hero.lines.join(' ')} line={t.contact.line} cta={t.a11y.reload} />}
+          onError={() => ScrollTrigger.getAll().forEach((st) => st.kill(true))}
+        >
+          <Page />
+        </ErrorBoundary>
+        <LangVeil />
+        <Cursor />
+      </SmoothScroll>
     </LazyMotion>
   )
 }

@@ -1,5 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { useInView, useReducedMotion } from '../../lib/hooks'
+import { useLang } from '../../lib/i18n'
+import { workShot } from '../../lib/assets'
+import type { Project } from '../../content/en'
 
 /** Web — flowing current lines */
 export function CurrentLines({ active }: { active: boolean }) {
@@ -129,12 +132,100 @@ export function SonarPhone({ active }: { active: boolean }) {
   )
 }
 
-export function ServiceVisual({ kind }: { kind: 'web' | 'ai' | 'mobile' }) {
+/** A website screenshot in a soft rounded frame — or a named placeholder frame until the file is dropped in. */
+function ShotFrame({ project, size }: { project: Project; size: 'panel' | 'strip' }) {
+  const src = workShot(project.slug)
+  return (
+    <figure className="m-0">
+      <div className="overflow-hidden rounded-[14px] border border-white/15 bg-[#0b1824] shadow-[0_24px_60px_-24px_rgba(0,0,0,0.75)]">
+        {src ? (
+          <img
+            src={src}
+            alt={`${project.name} — website`}
+            loading="lazy"
+            decoding="async"
+            width={640}
+            height={400}
+            className="block aspect-[16/10] w-full object-cover object-top"
+          />
+        ) : (
+          <div
+            className="relative flex aspect-[16/10] w-full items-center justify-center"
+            style={{ background: `radial-gradient(120% 90% at 20% 0%, ${project.hue[1]}66, transparent 60%), ${project.hue[0]}` }}
+            role="img"
+            aria-label={`${project.name} — website`}
+          >
+            <span aria-hidden className="absolute start-2.5 top-2 flex gap-1">
+              {[0, 1, 2].map((i) => (
+                <span key={i} className="size-1.5 rounded-full bg-white/35" />
+              ))}
+            </span>
+            <span dir="ltr" className={`font-display font-bold text-white/90 ${size === 'panel' ? 'text-lg' : 'text-xs'}`}>
+              {project.name}
+            </span>
+          </div>
+        )}
+      </div>
+      <figcaption dir="ltr" className={`mt-2 text-muted rtl:text-end ${size === 'panel' ? 'text-xs' : 'text-[0.65rem]'}`}>
+        {project.name}
+      </figcaption>
+    </figure>
+  )
+}
+
+// Where each frame floats on the currents (panel visual column), how far it drifts and how much it turns.
+const DRIFT = [
+  { left: '7%', top: '7%', width: '44%', amp: 140, rot: 7, delay: '0s' },
+  { left: '50%', top: '27%', width: '42%', amp: 90, rot: -5, delay: '-2.5s' },
+  { left: '5%', top: '50%', width: '40%', amp: 170, rot: 6, delay: '-5s' },
+  { left: '48%', top: '69%', width: '44%', amp: 110, rot: -8, delay: '-1.2s' },
+]
+
+/** Web — current lines with Bahr's real projects carried along like debris (desktop panel). */
+function DriftingShots() {
+  const { t } = useLang()
+  const projects = t.work.projects.filter((p) => p.featured)
+  return (
+    <div className="pointer-events-none absolute inset-0" dir="ltr">
+      {projects.map((p, i) => {
+        const d = DRIFT[i % DRIFT.length]
+        return (
+          // GSAP owns this wrapper's x/rotate (scroll); the inner bob is a CSS loop.
+          <div key={p.name} data-drift data-amp={d.amp} data-rot={d.rot} className="absolute will-change-transform" style={{ left: d.left, top: d.top, width: d.width }}>
+            <div className="drift-bob" style={{ animationDelay: d.delay }}>
+              <ShotFrame project={p} size="panel" />
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/** Mobile — a small strip of the same frames drifting sideways inside the accordion card. */
+function DriftStrip() {
+  const { t } = useLang()
+  const projects = t.work.projects.filter((p) => p.featured)
+  return (
+    <div className="absolute inset-x-0 bottom-3 overflow-hidden" dir="ltr">
+      <div className="strip-drift flex w-max gap-3 ps-3">
+        {[...projects, ...projects].map((p, i) => (
+          <div key={i} className="w-28 shrink-0" aria-hidden={i >= projects.length || undefined}>
+            <ShotFrame project={p} size="strip" />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export function ServiceVisual({ kind, variant = 'panel' }: { kind: 'web' | 'ai' | 'mobile'; variant?: 'panel' | 'card' }) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, '0px')
   return (
-    <div ref={ref} className="h-full w-full">
+    <div ref={ref} className={`relative h-full w-full ${inView ? '' : 'paused'}`}>
       {kind === 'web' && <CurrentLines active={inView} />}
+      {kind === 'web' && (variant === 'panel' ? <DriftingShots /> : <DriftStrip />)}
       {kind === 'ai' && <PlanktonNodes active={inView} />}
       {kind === 'mobile' && <SonarPhone active={inView} />}
     </div>

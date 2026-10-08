@@ -109,6 +109,26 @@ src/
   `LazyMotion`; WebGL loads on first interaction or ~4.5 s after load (idle).
 - **Agency overlap.** Under normal motion the agency section is pulled up 45svh so it rises over the end of the hero pin
   (no empty "dead water" screen); in reduced motion there is no pin and no overlap.
+- **Language switch** (fixes a blank page after EN↔AR).
+  - Root cause: SplitText rewrites the DOM inside React-managed headings, and pins wrap their elements in pin-spacers.
+    When the language changed, React tried to `removeChild` nodes GSAP had moved, threw, and unmounted the app.
+  - Fix: the toggle now runs `idle → covering → covered → revealing`. A short veil fades in, the language is committed,
+    and everything GSAP touches (`<Page>`, keyed by `lang` inside an `ErrorBoundary`) unmounts. Every `useGSAP` context
+    reverts its splits and pins. A fresh tree then mounts, `ScrollTrigger.refresh()` runs, and the scroll position is
+    restored per section (index plus fraction).
+  - The ErrorBoundary retries once and then shows a static fallback, so a crash never shows a blank page.
+  - The Intro, Cursor, Lenis and the veil live outside the keyed tree.
+- **Expertise reveal.** Panel text (and the drifting project frames) is driven by each panel's on-screen rect, read in
+  the horizontal tween's `onUpdate`. It no longer uses per-panel `containerAnimation` triggers, which the last panel
+  could fail to reach. A revealed panel stays revealed, and leaving the pin reveals everything.
+- **Owner images** (optional; `vite.config.ts` lists what exists into `__WORK_SHOTS__` and `__BRAND_MARK__`, so missing
+  files never 404).
+  - The website screenshots for the four featured projects drift in panel 01 (`public/work/<slug>.webp`, via
+    `npm run images`). Until a file exists, that project shows a framed, named placeholder.
+  - Bahr's «بحر» mark (`public/brand/bahr-mark.webp`, via `npm run mark`) appears only at the seabed and in the intro,
+    never in the hero, and is never upscaled.
+  - The owner's attachments did not reach the build container, so neither the screenshots nor the mark are committed
+    yet. The code paths were verified with placeholders and with a synthetic test mark, which was not shipped.
 - Default language EN; choice persisted in `localStorage` and applied by an inline script before first paint (no flash).
 
 ## Status
@@ -119,6 +139,8 @@ src/
   was not available in the build container, so the first deploy is a one-time manual import.
 - Lighthouse (local prod build, simulated throttling): mobile Performance 85–88, desktop 97; Accessibility,
   Best practices and SEO 100 on both.
+- 2nd pass: language switch verified 10× in a row at every section (incl. inside both pins), desktop + mobile, no errors;
+  expertise panel 03 text verified at 1024/1440/1920 in EN + AR; Lighthouse mobile 87–89.
 - Verified with Playwright screenshots: EN + AR, 1440 / 1024 / 390 / 375 widths, reduced motion, menu, language toggle,
   hover states, portal click, keyboard focus. No horizontal scroll at any width. Only remaining console message is
   a three.js `THREE.Clock` deprecation *warning* emitted from inside React Three Fiber (not our code).

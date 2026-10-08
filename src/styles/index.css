@@ -337,3 +337,28 @@ html.has-cursor button {
 .text-accent {
   color: var(--accent-ink);
 }
+
+/* Expertise → Web: project frames bobbing on the current (GSAP drives the wrapper, this drives the inner) */
+@keyframes drift-bob {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-1.2deg);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0) rotate(1.4deg);
+  }
+}
+.drift-bob {
+  animation: drift-bob 7s ease-in-out infinite;
+}
+@keyframes strip-drift {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.strip-drift {
+  animation: strip-drift 26s linear infinite;
+}
+[dir='rtl'] .strip-drift {
+  animation-direction: reverse;
+}

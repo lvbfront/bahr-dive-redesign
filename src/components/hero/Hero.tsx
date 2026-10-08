@@ -7,6 +7,8 @@ import { heroState, INTRO_DONE, isIntroDone } from './heroState'
 import { scrollToTarget } from '../../providers/SmoothScroll'
 
 const WaterCanvas = lazy(() => import('./WaterCanvas'))
+/** survives the page remount on a language switch: once loaded, load again immediately */
+let glRequested = false
 
 function webglAvailable() {
   try {
@@ -34,6 +36,11 @@ export function Hero() {
   // load when idle. WebGL support is only probed at that moment (creating a context is not free).
   useEffect(() => {
     if (reduced) return
+    if (glRequested) {
+      // remount after a language switch: bring the water back once the page has settled
+      const id = window.setTimeout(() => webglAvailable() && setLoadGL(true), 900)
+      return () => clearTimeout(id)
+    }
     let cancelled = false
     let timer = 0
     const events = ['pointermove', 'pointerdown', 'wheel', 'touchstart', 'keydown', 'scroll'] as const
@@ -41,6 +48,7 @@ export function Hero() {
       if (cancelled) return
       cancelled = true
       cleanup()
+      glRequested = true
       if (webglAvailable()) setLoadGL(true)
     }
     const cleanup = () => {

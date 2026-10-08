@@ -80,22 +80,51 @@ function HorizontalExpertise() {
         { scaleX: 0 },
         { scaleX: 1, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: () => `+=${distance()}`, scrub: true } },
       )
-      // each panel's content drifts in as it enters (tied to the horizontal tween)
-      gsap.utils.toArray<HTMLElement>('[data-panel]', root.current).forEach((panel) => {
-        gsap.from(panel.querySelectorAll('[data-in]'), {
+      // Panel text reveal + project-frame drift, computed from where each panel actually is on screen.
+      // Deliberately not per-panel ScrollTriggers (containerAnimation start/end can sit beyond the pin's reach,
+      // e.g. the last panel) — this can't miss, and once a panel's text is revealed it stays revealed.
+      const panels = gsap.utils.toArray<HTMLElement>('[data-panel]', root.current)
+      const reveals = panels.map((panel) =>
+        gsap.timeline({ paused: true }).from(panel.querySelectorAll('[data-in]'), {
           y: 50,
           opacity: 0,
           stagger: 0.08,
+          duration: 0.6,
           ease: 'power2.inOut',
-          scrollTrigger: {
-            trigger: panel,
-            containerAnimation: tween,
-            start: isRTL ? 'right 0%' : 'left 100%',
-            end: isRTL ? 'right 30%' : 'left 70%',
-            scrub: 0.6,
-          },
+        }),
+      )
+      const drifts = panels.map((panel) =>
+        gsap.utils.toArray<HTMLElement>('[data-drift]', panel).map((d) => ({
+          x: gsap.quickSetter(d, 'x', 'px') as (v: number) => void,
+          r: gsap.quickSetter(d, 'rotate', 'deg') as (v: number) => void,
+          amp: Number(d.dataset.amp) || 0,
+          rot: Number(d.dataset.rot) || 0,
+        })),
+      )
+      const sync = () => {
+        const vw = window.innerWidth
+        panels.forEach((panel, i) => {
+          const r = panel.getBoundingClientRect()
+          const visible = Math.min(r.right, vw) - Math.max(r.left, 0)
+          const p = gsap.utils.clamp(0, 1, visible / (Math.min(r.width, vw) * 0.4))
+          if (p > reveals[i].progress()) reveals[i].progress(p)
+          const travel = (r.left + r.width / 2 - vw / 2) / vw
+          for (const d of drifts[i]) {
+            d.x(travel * d.amp)
+            d.r(travel * d.rot)
+          }
         })
+      }
+      const revealAll = () => reveals.forEach((tl) => tl.progress(1))
+      tween.eventCallback('onUpdate', sync)
+      ScrollTrigger.create({
+        trigger: root.current,
+        start: 'top bottom',
+        end: () => `+=${distance() + window.innerHeight}`,
+        onRefresh: sync,
+        onLeave: revealAll,
       })
+      sync()
       ScrollTrigger.refresh()
     },
     { scope: root, dependencies: [lang], revertOnUpdate: true },
@@ -212,8 +241,8 @@ function StackedExpertise() {
                       transition={{ duration: 0.6, ease: EXPO }}
                     >
                       <div className="flex flex-col gap-5 px-6 pb-6">
-                        <div className="h-44 overflow-hidden rounded-2xl border border-[var(--line)]">
-                          <ServiceVisual kind={s.key} />
+                        <div className="relative h-44 overflow-hidden rounded-2xl border border-[var(--line)]">
+                          <ServiceVisual kind={s.key} variant="card" />
                         </div>
                         <p className="text-muted">{s.body}</p>
                         <Tags tags={s.tags} />

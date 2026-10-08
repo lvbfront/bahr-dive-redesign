@@ -19,6 +19,8 @@ const ar: Content = {
     introSkip: 'تخطَّ المقدّمة',
     opensNewTab: '(يُفتح في تبويب جديد)',
     home: 'بحر — العودة إلى السطح',
+    mark: 'بحر',
+    reload: 'إعادة تحميل الصفحة',
   },
   brand: en.brand,
   nav: {

@@ -3,6 +3,7 @@ import { AnimatePresence, m } from 'motion/react'
 import { useLang } from '../../lib/i18n'
 import { markIntroDone } from '../hero/heroState'
 import { useReducedMotion } from '../../lib/hooks'
+import { brandMark } from '../../lib/assets'
 
 const EXPO = [0.16, 1, 0.3, 1] as const
 
@@ -21,7 +22,7 @@ export function Intro() {
       return
     }
     const done = () => setShow(false)
-    const timer = window.setTimeout(done, 1350)
+    const timer = window.setTimeout(done, brandMark ? 1500 : 1350)
     const skip = () => done()
     window.addEventListener('keydown', skip, { once: true })
     window.addEventListener('wheel', skip, { once: true, passive: true })
@@ -69,17 +70,30 @@ export function Intro() {
                 transition={{ duration: 1.1, delay: 0.55 + i * 0.13, ease: EXPO }}
               />
             ))}
-            <m.span
-              dir="ltr"
-              lang="en"
-              className="font-display absolute top-[150px] text-2xl font-extrabold tracking-[0.02em] text-ink"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7, duration: 0.6, ease: EXPO }}
-            >
-              {t.intro.slice(0, -1)}
-              <span className="text-glow">{t.intro.slice(-1)}</span>
-            </m.span>
+{brandMark ? (
+              // the ripple resolves into Bahr's mark for a moment before the hero appears
+              <m.img
+                src={brandMark}
+                alt=""
+                decoding="async"
+                className="absolute top-[132px] left-1/2 h-auto max-h-24 w-auto max-w-[200px] -translate-x-1/2 -translate-y-1/2"
+                initial={{ opacity: 0, scale: 0.86, filter: 'blur(6px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                transition={{ delay: 0.72, duration: 0.6, ease: EXPO }}
+              />
+            ) : (
+                          <m.span
+                dir="ltr"
+                lang="en"
+                className="font-display absolute top-[150px] text-2xl font-extrabold tracking-[0.02em] text-ink"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7, duration: 0.6, ease: EXPO }}
+              >
+                {t.intro.slice(0, -1)}
+                <span className="text-glow">{t.intro.slice(-1)}</span>
+              </m.span>
+            )}
           </div>
         </m.div>
       )}

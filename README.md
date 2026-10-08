@@ -37,13 +37,16 @@ darkens to near black, a live depth meter counts down, and the contact call to a
   velocity, and hovering pauses a row and lights a name in the accent colour. Below them are three count-up stats
   built only from real facts.
 - **Expertise.** On desktop, a pinned horizontal scroll moves through three panels, each with a hand-made animated
-  visual: flowing current lines (web), glowing plankton nodes (AI), and a phone with sonar rings (mobile). On mobile
-  the panels become accordion cards with Framer Motion layout animation.
+  visual: flowing current lines (web), glowing plankton nodes (AI), and a phone with sonar rings (mobile). In the web
+  panel, screenshots of Bahr's real projects (Alageely, Riyadh Retina, Sycleague, LineUp) drift along the currents
+  like debris carried by the stream. On mobile the panels become accordion cards with Framer Motion layout animation,
+  and the screenshots become a small drifting strip.
 - **Selected work.**
   - Hovering a project row shows a royal-blue glow that follows the cursor, plus a floating preview card.
   - Clicking plays a circle-wipe "portal" and then opens the project on bybahr.com in a new tab.
 - **Seabed.**
   - The giant line "Let's dive deeper." sits here, and the depth meter pulses once at −3,000 m.
+  - Bahr's own blue «بحر» mark glows into view above it, like the treasure at the bottom of the dive.
   - The email button is a large circle with rising bubbles and a slight magnetic pull.
   - "Back to surface ↑" scrolls to the top with Lenis while the meter counts back up and the colours reverse.
 - **Arabic and RTL.**
@@ -52,13 +55,16 @@ darkens to near black, a live depth meter counts down, and the contact call to a
   - The layout uses logical CSS properties, so the depth meter, marquee, horizontal scroll and slide directions all
     mirror.
   - Arabic text is split into words, never into characters.
+  - Switching language fades a short veil in, rebuilds the page in the new direction and returns you to the same spot.
+    An error boundary means a failure never leaves a blank page.
 - **Accessibility.**
   - Landmarks, a skip link, visible focus styles, ARIA labels, full keyboard support, and screen-reader text for
     split headlines.
   - A complete `prefers-reduced-motion` version with no WebGL, no pins and no Lenis, just simple fades.
 - **Delights.**
   - A custom cursor: a small ring that becomes a bubble over links.
-  - A skippable 1.3 s intro in which a drop hits the water. It plays over a page that has already rendered.
+  - A skippable intro of about 1.3 s: a drop hits the water and the ripple resolves into Bahr's mark. It plays over a
+    page that has already rendered.
 
 ## Stack
 
@@ -109,6 +115,21 @@ All copy lives in `src/content/en.ts` and `src/content/ar.ts`, taken from Bahr's
 The official Arabic hero line «عمق إبداعي مختلف» is used as is. `CLAUDE.md` → *Decisions* notes which Arabic strings are
 still our own translation.
 
+## Adding Bahr's images
+
+Both kinds of image are optional. Only files that exist are referenced, so nothing 404s, and the dev server needs a
+restart after you add files.
+
+- **Project screenshots.** Drop `alageely`, `riyadh-retina`, `sycleague` and `lineup` (`.png`, `.jpg` or `.webp`) into
+  `public/work/`, then run `npm run images`. That converts them to WebP (max 1280 px wide) and removes the originals.
+  A project without a file shows a framed placeholder with its name.
+- **The «بحر» mark.** Run `npm run mark -- path/to/screenshot.png`.
+  - It keeps only the blue mark: it drops the light background, the grey contour lines and the black words, softens
+    and un-fringes the edges, and crops tightly.
+  - It writes `public/brand/bahr-mark.webp` and `.png`.
+  - The mark is shown at its natural size at most, never upscaled. It appears only in the seabed section and the
+    intro, never in the hero.
+
 ## Credits
 
 - Concept, design and code: built with **Claude Code** for the GDG on Campus UJ × Bahr challenge.
@@ -116,4 +137,5 @@ still our own translation.
   (Noise Studio). No assets or code were copied.
 - Fonts: [Syne](https://fonts.google.com/specimen/Syne) and [IBM Plex Sans Arabic](https://fonts.google.com/specimen/IBM+Plex+Sans+Arabic),
   both under the SIL Open Font License.
-- All brand content belongs to Bahr Agency.
+- All brand content belongs to Bahr Agency, including the «بحر» calligraphy mark, the "BAHR." wordmark and the
+  project screenshots. They are used here only for this challenge entry.

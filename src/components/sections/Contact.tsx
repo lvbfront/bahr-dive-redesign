@@ -3,6 +3,7 @@ import { gsap, SplitText, useGSAP } from '../../lib/gsap'
 import { useLang } from '../../lib/i18n'
 import { EMAIL, LINKEDIN } from '../../content/en'
 import { Magnetic } from '../ui/Magnetic'
+import { brandMark } from '../../lib/assets'
 
 const BUBBLES = [
   { l: '18%', s: 10, t: '3.2s', d: '0s', dx: '-6px' },
@@ -20,6 +21,20 @@ export function Contact() {
   useGSAP(
     () => {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      // Bahr's mark: the treasure at the bottom of the dive — glows into view as we reach −3,000 m
+      const mark = root.current!.querySelector('[data-mark]')
+      if (mark)
+        gsap.fromTo(
+          mark,
+          { opacity: 0, y: 28, filter: 'drop-shadow(0 0 0px rgba(61,108,240,0))' },
+          {
+            opacity: 1,
+            y: 0,
+            filter: 'drop-shadow(0 0 26px rgba(61,108,240,0.55))',
+            ease: 'power2.inOut',
+            scrollTrigger: { trigger: root.current, start: 'top 70%', end: 'top 10%', scrub: 0.8 },
+          },
+        )
       const title = root.current!.querySelector('[data-title]')!
       const split = SplitText.create(title, {
         type: isRTL ? 'lines,words' : 'lines,words,chars',
@@ -62,6 +77,13 @@ export function Contact() {
         }}
       />
       <p className="kicker relative">{t.contact.kicker} — <span dir="ltr">−3,000 {t.depth.unit}</span></p>
+
+      {brandMark && (
+        <div className="relative mt-10 w-[clamp(110px,14vw,200px)]">
+          {/* never upscaled: natural width, capped by the wrapper */}
+          <img data-mark src={brandMark} alt={t.a11y.mark} loading="lazy" decoding="async" className="block h-auto w-auto max-w-full" />
+        </div>
+      )}
 
       <div className="relative mt-10 grid items-center gap-12 lg:grid-cols-[1fr_auto]">
         <h2
