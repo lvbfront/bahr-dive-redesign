@@ -1,0 +1,322 @@
+@import 'tailwindcss';
+
+/* ───────────── Fonts (self-hosted, preloaded in index.html) ───────────── */
+@font-face {
+  font-family: 'Syne';
+  src: url('/fonts/syne-latin.woff2') format('woff2-variations'), url('/fonts/syne-latin.woff2') format('woff2');
+  font-weight: 400 800;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Plex Arabic: arabic subset */
+@font-face { font-family: 'Plex Arabic'; src: url('/fonts/plex-arabic-300.woff2') format('woff2'); font-weight: 300; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC; }
+@font-face { font-family: 'Plex Arabic'; src: url('/fonts/plex-arabic-400.woff2') format('woff2'); font-weight: 400; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC; }
+@font-face { font-family: 'Plex Arabic'; src: url('/fonts/plex-arabic-500.woff2') format('woff2'); font-weight: 500; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC; }
+@font-face { font-family: 'Plex Arabic'; src: url('/fonts/plex-arabic-600.woff2') format('woff2'); font-weight: 600; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC; }
+@font-face { font-family: 'Plex Arabic'; src: url('/fonts/plex-arabic-700.woff2') format('woff2'); font-weight: 700; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC; }
+/* Plex Arabic: latin subset (body copy in EN) */
+@font-face { font-family: 'Plex Arabic'; src: url('/fonts/plex-latin-300.woff2') format('woff2'); font-weight: 300; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Plex Arabic'; src: url('/fonts/plex-latin-400.woff2') format('woff2'); font-weight: 400; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Plex Arabic'; src: url('/fonts/plex-latin-500.woff2') format('woff2'); font-weight: 500; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Plex Arabic'; src: url('/fonts/plex-latin-600.woff2') format('woff2'); font-weight: 600; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Plex Arabic'; src: url('/fonts/plex-latin-700.woff2') format('woff2'); font-weight: 700; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+/* ───────────── Design tokens ───────────── */
+@theme {
+  --color-surface: #e6e6df;
+  --color-ink: #0b0f14;
+  --color-shallow: #9fb7c4;
+  --color-mid: #2c5d73;
+  --color-deep: #0e2a3a;
+  --color-abyss: #050b12;
+  --color-glow: #5ff2e6;
+
+  --font-display: 'Syne', 'Plex Arabic', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Plex Arabic', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --breakpoint-xs: 26rem;
+}
+
+:root {
+  /* written every frame by DiveController */
+  --bg: #e6e6df;
+  --fg: #0b0f14;
+  --fg-muted: rgb(11 15 20 / 0.62);
+  --line: rgb(11 15 20 / 0.18);
+  --fg-inverse: #e6e6df;
+  --depth: 0;
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --rail: clamp(0px, 6vw, 5.5rem);
+}
+:root[data-tone='light'] {
+  --fg: #e9ede9;
+  --fg-muted: rgb(233 237 233 / 0.68);
+  --line: rgb(233 237 233 / 0.2);
+  --fg-inverse: #0b0f14;
+}
+
+html {
+  background: #050b12;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.55;
+  overflow-x: clip;
+  transition: color 0.6s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[lang='ar'] {
+  --font-display: 'Plex Arabic', ui-sans-serif, system-ui, sans-serif;
+}
+[lang='ar'] body {
+  line-height: 1.75;
+}
+
+::selection {
+  background: var(--color-glow);
+  color: var(--color-ink);
+}
+
+/* focus-visible everywhere, readable at every depth */
+:focus-visible {
+  outline: 2px solid var(--color-glow);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+:root:not([data-tone='light']) :focus-visible {
+  outline-color: #0b5f73;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-feature-settings: 'ss01';
+}
+
+.text-muted {
+  color: var(--fg-muted);
+}
+.border-line {
+  border-color: var(--line);
+}
+
+/* Section kicker "01 / The agency" */
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+[lang='ar'] .kicker {
+  letter-spacing: 0;
+  font-size: 0.95rem;
+}
+.kicker::before {
+  content: '';
+  inline-size: 2.25rem;
+  block-size: 1px;
+  background: currentColor;
+}
+
+/* SplitText masks */
+.split-mask {
+  overflow: clip;
+  padding-block: 0.06em;
+  margin-block: -0.06em;
+}
+[lang='ar'] .split-mask {
+  padding-block: 0.18em;
+  margin-block: -0.18em;
+}
+
+/* Light rays */
+@keyframes ray-sway {
+  0%,
+  100% {
+    transform: translateX(-2%) rotate(var(--r));
+  }
+  50% {
+    transform: translateX(2%) rotate(calc(var(--r) + 2deg));
+  }
+}
+.ray {
+  position: absolute;
+  inset-block-start: -10vh;
+  block-size: 120vh;
+  transform-origin: 50% 0;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.55), rgb(255 255 255 / 0));
+  filter: blur(18px);
+  animation: ray-sway var(--d) ease-in-out infinite;
+}
+
+/* Hero CSS water (fallback + pre-WebGL paint) */
+@keyframes caustic-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-3%, 2%, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+.water-fallback {
+  background:
+    radial-gradient(120% 70% at 70% 15%, rgb(255 255 255 / 0.85), transparent 60%),
+    radial-gradient(90% 60% at 20% 80%, rgb(159 183 196 / 0.55), transparent 70%),
+    linear-gradient(180deg, #eef0ea 0%, #e6e6df 45%, #cfdcdf 100%);
+}
+.water-fallback::after {
+  content: '';
+  position: absolute;
+  inset: -10%;
+  background:
+    repeating-radial-gradient(circle at 30% 40%, rgb(255 255 255 / 0.22) 0 2px, transparent 3px 26px),
+    repeating-radial-gradient(circle at 75% 65%, rgb(44 93 115 / 0.08) 0 2px, transparent 3px 34px);
+  mix-blend-mode: soft-light;
+  animation: caustic-drift 14s ease-in-out infinite;
+}
+
+/* Bubbles in the seabed CTA */
+@keyframes bubble-rise {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(var(--dx, 0px), -260%, 0) scale(1.1);
+    opacity: 0;
+  }
+}
+.bubble {
+  position: absolute;
+  inset-block-end: 8%;
+  border-radius: 9999px;
+  border: 1px solid rgb(95 242 230 / 0.7);
+  background: radial-gradient(circle at 30% 30%, rgb(255 255 255 / 0.6), rgb(95 242 230 / 0.08) 60%);
+  animation: bubble-rise var(--t, 3s) ease-in infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+/* Bobbing scroll cue */
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+.bob {
+  animation: bob 2.4s ease-in-out infinite;
+}
+
+/* Expertise visuals */
+@keyframes current-flow {
+  to {
+    stroke-dashoffset: -400;
+  }
+}
+@keyframes sonar {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+@keyframes node-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.paused * {
+  animation-play-state: paused !important;
+}
+
+/* Marquee */
+.marquee-row {
+  display: flex;
+  inline-size: max-content;
+  will-change: transform;
+}
+
+/* Custom cursor: hide native only when ours is active */
+html.has-cursor,
+html.has-cursor a,
+html.has-cursor button {
+  cursor: none;
+}
+
+/* Skip link */
+.skip-link {
+  position: fixed;
+  inset-inline-start: 1rem;
+  inset-block-start: -4rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-surface);
+  transition: inset-block-start 0.2s;
+}
+.skip-link:focus {
+  inset-block-start: 1rem;
+}
+
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .ray,
+  .water-fallback::after {
+    animation: none;
+  }
+}
