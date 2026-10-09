@@ -38,11 +38,13 @@ darkens to near black, a live depth meter counts down, and the contact call to a
   - The headline is revealed with SplitText.
   - A pinned, scrubbed scene handles **breaking the surface**: the camera dips below the waterline, the surface tilts
     and rises away, a meniscus sweeps past the lens, and the headline sinks and blurs.
-  - **Bahr's «بحر» mark** floats at the surface next to the headline.
+  - **Bahr's «بحر» mark** floats at the surface, locked up with the headline as one unit: beside it on desktop,
+    above it on phones.
     - It's a vector with a living liquid gradient inside the letters, in Bahr's blues. It drifts on its own and stirs
       with a soft ripple when the pointer or a finger moves inside the letters.
-    - As you start scrolling it shrinks and flies up into the nav, scrubbed with the scroll, and becomes the logo for
-      the rest of the page. Scrolling back to the top reverses it.
+    - As you start scrolling it shrinks and flies up into the nav, scrubbed with the scroll. The "BAHR." wordmark
+      cross-fades out as the mark lands in its place, and the mark is the logo for the rest of the page. Scrolling back
+      to the top reverses both.
 - **The agency.** The statement is revealed word by word on scroll, the paragraphs rise line by line, and the
   "Explore our expertise" button has a magnetic hover.
 - **In good company.** Project names drift in two rows in opposite directions like currents. The speed reacts to scroll
@@ -59,7 +61,8 @@ darkens to near black, a live depth meter counts down, and the contact call to a
   - Clicking plays a circle-wipe "portal" and then opens the project on bybahr.com in a new tab.
 - **Seabed.**
   - The giant line "Let's dive deeper." sits here, and the depth meter pulses once at −3,000 m.
-  - Bahr's «بحر» mark, in its liquid gradient, glows into view above it, like the treasure at the bottom of the dive.
+  - Bahr's «بحر» mark, in its liquid gradient, glows in beside it as one lockup, like the treasure at the bottom of
+    the dive.
   - The email button is a large circle with rising bubbles and a slight magnetic pull.
   - "Back to surface ↑" scrolls to the top with Lenis while the meter counts back up and the colours reverse.
 - **Arabic and RTL.**
@@ -105,6 +108,8 @@ phones count too.
   - The custom cursor is off.
   - A work row lights up and shows its preview when it reaches the middle of the screen.
   - The client name drifting through the centre lights up, and tapping a row holds it still.
+- **Any system theme.** The page opts out of browser auto-dark (`color-scheme: only light`), so phones in dark mode
+  still get the bright surface and the dark seabed.
 - **Lighter rendering.** DPR is capped at 1.25 and the WebGL grid is lighter. Low-end devices or data-saver keep the CSS
   water, marine snow drops to 18 particles, the intro is shorter and skippable with a tap, and off-screen visuals render
   lazily.
@@ -123,8 +128,8 @@ Lighthouse (local production build, Lighthouse 12 with its default simulated thr
 
 | | Performance | Accessibility | Best practices | SEO |
 |---|---|---|---|---|
-| Mobile | **84–90** | 100 | 100 | 100 |
-| Desktop | **94–97** | 100 | 100 | 100 |
+| Mobile | **87–90** | 100 | 100 | 100 |
+| Desktop | **88–96** | 100 | 100 | 100 |
 
 ## Run it
 

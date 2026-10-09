@@ -4,7 +4,7 @@ import { scrollToTarget } from '../../providers/SmoothScroll'
 export function Footer() {
   const { t } = useLang()
   return (
-    <footer className="relative z-10 border-t border-[var(--line)] pt-10 pb-[calc(2.5rem+var(--dock))] ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)] text-sm">
+    <footer className="relative z-10 border-t border-[var(--line)] pt-10 pb-[calc(2.5rem+var(--dock))] mob:pb-[calc(1.5rem+var(--dock))] ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)] text-sm">
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col gap-2">
           <p className="text-muted">{t.footer.place}</p>

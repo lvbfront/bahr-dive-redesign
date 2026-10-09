@@ -78,25 +78,32 @@ export function Contact() {
       />
       <p className="kicker relative">{t.contact.kicker} — <span dir="ltr">−3,000 {t.depth.unit}</span></p>
 
-      {/* Bahr's mark: the treasure at the bottom of the dive */}
-      <div data-mark className="relative mt-10 w-[clamp(120px,15vw,210px)]">
-        <BahrMark live className="w-full" />
-      </div>
-
-      <div className="relative mt-10 grid items-center gap-12 lg:grid-cols-[1fr_auto]">
-        <h2
-          id="contact-title"
-          data-title
-          className={`font-display font-bold ${
-            isRTL ? 'text-[clamp(3.2rem,10vw,9.5rem)] leading-[1.2]' : 'text-[clamp(2.8rem,8.6vw,9rem)] leading-[0.92] tracking-[-0.04em] [&_.word]:whitespace-nowrap'
+      <div className="relative mt-10 grid items-center gap-12 lg:grid-cols-[1fr_auto] mob:mt-8 mob:gap-8">
+        {/* Lockup: "Let's dive deeper." + Bahr's mark (the treasure at the bottom of the dive), one unit.
+            The mark is as tall as the two headline lines; sized in em so it always matches the type. */}
+        <div
+          data-lockup
+          className={`flex items-center gap-[0.3em] ${
+            isRTL ? 'text-[clamp(3rem,min(8.4vw,15svh),8.5rem)] mob:text-[min(13vw,12svh)]' : 'text-[clamp(2.8rem,min(7vw,13svh),8rem)] mob:text-[min(10.4vw,9.5svh)]'
           }`}
         >
-          {t.contact.title.map((l, i) => (
-            <span key={`${lang}-${i}`} data-line className={`block ${i === 1 ? 'text-glow-bright' : ''}`}>
-              {l}
-            </span>
-          ))}
-        </h2>
+          <h2
+            id="contact-title"
+            data-title
+            className={`font-display min-w-0 text-[1em] font-bold ${
+              isRTL ? 'leading-[1.2]' : 'leading-[0.92] tracking-[-0.04em] [&_.word]:whitespace-nowrap'
+            }`}
+          >
+            {t.contact.title.map((l, i) => (
+              <span key={`${lang}-${i}`} data-line className={`block ${i === 1 ? 'text-glow-bright' : ''}`}>
+                {l}
+              </span>
+            ))}
+          </h2>
+          <div data-mark className={`aspect-[1007/882] shrink-0 ${isRTL ? 'h-[2.4em]' : 'h-[1.84em]'}`}>
+            <BahrMark live className="h-full" />
+          </div>
+        </div>
 
         <div data-cin className="justify-self-start lg:justify-self-end">
           <Magnetic strength={0.4}>

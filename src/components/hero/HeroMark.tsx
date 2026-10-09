@@ -28,8 +28,11 @@ export function HeroMark() {
       const phone = window.matchMedia(MOBILE).matches
 
       // hero box: the slot's offset inside the pinned hero, which sits at the very top of the page
+      const pin = slot.closest<HTMLElement>('[data-hero-pin]') ?? document.body
       const geom = () => {
-        const hero = { x: slot.offsetLeft, y: slot.offsetTop, w: slot.offsetWidth, h: slot.offsetHeight }
+        const s = slot.getBoundingClientRect()
+        const p = pin.getBoundingClientRect()
+        const hero = { x: s.left - p.left, y: s.top - p.top, w: s.width, h: s.height }
         const n = nav.getBoundingClientRect()
         gsap.set(el, { left: hero.x, top: hero.y, width: hero.w, height: hero.h })
         return { dx: n.left - hero.x, dy: n.top - hero.y, s: n.height / Math.max(1, hero.h) }
@@ -52,6 +55,8 @@ export function HeroMark() {
       })
       tl.fromTo(el, { x: 0, y: 0, scale: 1 }, { x: () => geom().dx, y: () => geom().dy, scale: () => geom().s, duration: 1 }, 0)
       tl.to('[data-mark-shadow]', { opacity: 0, scaleX: 0.4, duration: 0.5 }, 0)
+      // "BAHR." holds the nav until the mark lands in its place, then cross-fades out (and back in on the way up)
+      tl.fromTo('[data-nav-wordmark]', { opacity: 1, filter: 'blur(0px)' }, { opacity: 0, filter: 'blur(4px)', duration: 0.22, ease: 'power1.in' }, 0.78)
       const onResize = () => geom()
       window.addEventListener('resize', onResize)
       return () => window.removeEventListener('resize', onResize)

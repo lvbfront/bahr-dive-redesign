@@ -3,8 +3,6 @@ import { AnimatePresence, m } from 'motion/react'
 import { useLang } from '../../lib/i18n'
 import { scrollToTarget, getLenis } from '../../providers/SmoothScroll'
 import { LangToggle } from './LangToggle'
-import { BahrMark } from '../brand/BahrMark'
-import { useReducedMotion } from '../../lib/hooks'
 
 const EXPO = [0.16, 1, 0.3, 1] as const
 
@@ -32,10 +30,28 @@ function MenuIcon({ open }: { open: boolean }) {
  */
 export function Nav() {
   const { t, isRTL } = useLang()
-  const reduced = useReducedMotion()
   const [open, setOpen] = useState(false)
   const sheet = useRef<HTMLDivElement>(null)
+  const dock = useRef<HTMLDivElement>(null)
   const [dockAway, setDockAway] = useState(false)
+
+  // Expose the dock's real footprint (height + bottom offset) so the footer/menu can reserve exactly that space.
+  useEffect(() => {
+    const el = dock.current
+    if (!el) return
+    const root = document.documentElement
+    const set = () => {
+      if (!el.offsetHeight) return root.style.removeProperty('--dock-h')
+      root.style.setProperty('--dock-h', `${el.offsetHeight + 14}px`)
+    }
+    const ro = new ResizeObserver(set)
+    ro.observe(el)
+    set()
+    return () => {
+      ro.disconnect()
+      root.style.removeProperty('--dock-h')
+    }
+  }, [])
 
   // Phones: the dock steps aside while you read (scrolling down) and returns as soon as you scroll up, stop near the
   // end, or open the menu — so it never parks on top of content.
@@ -104,11 +120,15 @@ export function Nav() {
           aria-label="Primary"
           className="flex items-center justify-between gap-6 pt-[max(1.25rem,var(--safe-top))] pb-5 ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)] mob:pt-[max(0.625rem,var(--safe-top))] mob:pb-2"
         >
-          <a href="#top" onClick={go('top')} aria-label={t.a11y.home} className="group -my-2 flex min-h-11 min-w-11 items-center" data-cursor>
-            {/* Bahr's mark docks here after flying up from the hero (rendered static in reduced motion) */}
-            <span data-nav-mark-slot className="block aspect-[1007/882] h-8 mob:h-7">
-              {reduced && <BahrMark className="nav-mark h-full" />}
+          <a href="#top" onClick={go('top')} aria-label={t.a11y.home} className="group relative -my-2 flex min-h-11 min-w-11 items-center" data-cursor>
+            {/* "BAHR." at the top of the page; cross-fades out as Bahr's mark flies up from the hero and lands here */}
+            <span data-nav-wordmark dir="ltr" lang="en" className="font-display text-[1.35rem] leading-none font-extrabold tracking-[0.02em]">
+              {t.brand.word}
+              <span className="text-accent inline-block transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-y-[-0.12em]">
+                {t.brand.dot}
+              </span>
             </span>
+            <span data-nav-mark-slot aria-hidden className="pointer-events-none absolute start-0 top-1/2 block aspect-[1007/882] h-8 -translate-y-1/2 mob:h-7" />
           </a>
 
           <ul className="hidden items-center gap-8 text-sm lg:flex">
@@ -139,6 +159,7 @@ export function Nav() {
 
       {/* phones: thumb dock */}
       <m.div
+        ref={dock}
         animate={{ y: dockAway && !open ? 'calc(100% + 2rem)' : '0%' }}
         transition={{ duration: 0.45, ease: EXPO }}
         className="fixed z-[46] hidden items-center gap-1.5 rounded-full border border-[var(--line)] bg-[color-mix(in_srgb,var(--fg-inverse)_72%,transparent)] p-1.5 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)] backdrop-blur-md mob:flex"

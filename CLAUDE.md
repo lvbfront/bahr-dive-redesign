@@ -152,12 +152,32 @@ src/
     - Docked = progress > 0.97, which switches to the static gradient and brightens it over deep water.
     - It lives in the language-keyed tree, so a switch reverts its tween and trigger.
     - The switch also flips `<html dir>` before the new tree mounts, so the mark measures the right side.
-  - Reduced motion: a static mark in the hero and a static mark in the nav slot, with no flight.
+  - **Lockups.** The mark and the headline form one unit, sized in `em` of the headline so they scale together and
+    mirror in AR.
+    - Hero, desktop and landscape: the mark sits beside the headline, vertically centred (EN mark height 2.6em, AR 3em).
+    - Hero, portrait phones: the mark sits above the headline at the start edge, `min(62vw, 46svh)` wide, with a
+      0.2em gap.
+    - Seabed: "Let's dive deeper." plus a trailing mark as tall as the two lines (EN 1.84em, AR 2.4em). On phones it's a
+      tight lockup that fits the width, with the button below. There is no standalone mark any more.
+    - `index.html`'s static first-paint hero inlines the same lockup and vector, so nothing jumps when React mounts.
+  - **Nav handoff.** "BAHR." (`[data-nav-wordmark]`) is visible at the top. The mark lands over its start edge
+    (`[data-nav-mark-slot]` is absolute at `start-0`) and the wordmark cross-fades out over the last ~22% of the
+    flight; scrolling back reverses both.
+  - Reduced motion: a static mark in the hero lockup, "BAHR." in the nav, and no flight.
   - Also used in the intro (the ripple resolves into it) and at the seabed (it glows in at −3,000 m).
 - **Phones are their own design** (see README → Mobile): native scroll, short pin, bottom thumb dock + bottom-sheet menu,
   slim gutter gauge, in-view equivalents for every hover. "Phone" = `MOBILE` in `src/lib/hooks.ts` = the `mob:` variant.
 - **Project frames** in Expertise are designed abstract mini-sites (`src/components/ui/MiniSite.tsx`), never fake
   screenshots; a real file in `public/work/<slug>.webp` replaces one automatically. Also used as the work-row previews.
+- **Dark-mode inversion fix.** Phones in dark mode (Chrome on Android auto-dark, Samsung Internet and similar) were
+  force-darkening the light surface and inverting the dive.
+  - Reproduced with Chromium's `--force-dark-mode` / `WebContentsForceDark`.
+  - Fixed with `<meta name="color-scheme" content="only light">` plus `color-scheme: only light` and
+    `forced-color-adjust: none` on `html`. The gradient now renders identically in light and dark system themes.
+  - Our CSS has no `prefers-color-scheme` rules, and the scroll-to-colour mapping is the same with native scroll.
+- **Dock padding.** `<Nav />` measures the dock (height + bottom offset) into `--dock-h`. On phones
+  `--dock = --dock-h + safe-area inset`, and the footer reserves `--dock + 1.5rem`, so the dock never covers the last
+  footer lines.
 - Default language EN; choice persisted in `localStorage` and applied by an inline script before first paint (no flash).
 
 ## Mobile audit (2026-10-09, before fixes)
@@ -215,8 +235,13 @@ overflow, meter overlap and tap-target size.
 - Repo: https://github.com/lvbfront/bahr-dive-redesign (`main`; work branch `claude/nice-faraday-nzc3xg`)
 - Live: deploys on push once the repo is imported in Vercel (defaults: Vite / `npm run build` / `dist`). The Vercel CLI
   was not available in the build container, so the first deploy is a one-time manual import.
-- Lighthouse (local prod build, simulated throttling): mobile Performance 84–90, desktop 94–97; Accessibility,
+- Lighthouse (local prod build, simulated throttling): mobile Performance 87–90, desktop 88–96; Accessibility,
   Best practices and SEO 100 on both.
+- 5th pass: the mark is now locked up with the hero headline and the seabed line, "BAHR." hands off to the mark in the
+  nav, dark-mode inversion is fixed, and the footer reserves the dock's space.
+  - Verified across phones in light and dark themes, at 5 laptop sizes, in EN and AR, and with reduced motion.
+  - 12 language switches each on desktop and phone (including mid-flight) with 0 errors; the phone audit is clean.
+  - Lighthouse mobile 87–88, desktop 88–92 (only speed index varies, because of the intro).
 - 4th pass: expertise panel 03 fixed for real (grid row overflow) and verified at 5 laptop sizes × EN/AR × slow/fast/
   backward/wheel (0 problems).
   - Bahr's «بحر» mark is vectorised (IoU 0.998) and drawn as a liquid WebGL `<BahrMark />`. It's in the hero, flies to

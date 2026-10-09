@@ -73,7 +73,8 @@
 @media (max-width: 767px), (pointer: coarse) and (max-height: 540px), (hover: none) and (max-height: 540px) {
   :root {
     --rail: 0px;
-    --dock: calc(4.5rem + var(--safe-bottom));
+    /* dock height + its bottom offset (measured live by <Nav />, 4.75rem until then) + the home-bar inset */
+    --dock: calc(var(--dock-h, 4.75rem) + var(--safe-bottom));
   }
   /* Plex Arabic reads small at 16px on phones */
   [lang='ar'] body {
@@ -95,6 +96,9 @@
 }
 
 html {
+  /* the depth colours are the design: never let the UA re-colour them for dark mode */
+  color-scheme: only light;
+  forced-color-adjust: none;
   background: #050b12;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;

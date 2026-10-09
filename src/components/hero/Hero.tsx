@@ -164,7 +164,7 @@ export function Hero() {
 
   return (
     <section id="top" ref={section} aria-labelledby="hero-title" className="relative">
-      <div ref={pin} className="relative h-[100svh] overflow-hidden desk:min-h-[560px]">
+      <div ref={pin} data-hero-pin className="relative h-[100svh] overflow-hidden desk:min-h-[560px]">
         {/* water */}
         <div data-water className="absolute inset-0" aria-hidden>
           <div data-css-surface className="water-fallback absolute inset-0 origin-top overflow-hidden" />
@@ -193,20 +193,6 @@ export function Hero() {
           />
         </div>
 
-        {/* Bahr's mark floats here at the surface; <HeroMark /> flies it into the nav (static here in reduced motion) */}
-        <div
-          data-hero-mark-slot
-          aria-hidden={!reduced || undefined}
-          className="absolute end-[var(--gutter)] top-[max(17svh,9.5rem)] z-10 aspect-[1007/882] h-[min(30svh,20vw)] mob:top-[19svh] mob:h-[min(19svh,32vw)]"
-        >
-          {reduced && <BahrMark className="h-full" />}
-          <span
-            data-mark-shadow
-            aria-hidden
-            className="pointer-events-none absolute inset-x-[8%] -bottom-[9%] h-[10%] rounded-[50%] bg-[radial-gradient(closest-side,rgba(11,47,128,0.28),transparent)] blur-[6px]"
-          />
-        </div>
-
         {/* content */}
         <div className="relative z-10 flex h-full flex-col justify-between pt-28 pb-10 ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)] text-ink mob:pt-[calc(4.25rem+var(--safe-top))] mob:pb-[calc(1rem+var(--safe-bottom))]">
           <div data-meta className="flex flex-wrap items-start justify-between gap-4 text-sm">
@@ -216,22 +202,44 @@ export function Hero() {
             </p>
           </div>
 
-          <div data-headline className="will-change-transform">
-            <h1
-              id="hero-title"
-              ref={headline}
-              className={`font-display font-bold ${
-                isRTL
-                  ? 'text-[clamp(3.4rem,12vw,10.5rem)] leading-[1.15] mob:text-[min(16vw,17svh)] mob:leading-[1.22]'
-                  : 'text-[clamp(2.6rem,10.2vw,10rem)] leading-[0.92] tracking-[-0.035em] mob:text-[min(12.2vw,15.5svh)] [&_.word]:whitespace-nowrap'
-              }`}
+          {/* Lockup: Bahr's mark + headline read as one unit. Sized in em of the headline so they scale together.
+              Desktop / landscape: mark beside the headline, vertically centred. Portrait phones: mark above, ~62% wide.
+              <HeroMark /> flies the live mark from this slot into the nav (static here in reduced motion). */}
+          <div
+            data-lockup
+            className={`flex items-center gap-[0.32em] mob:portrait:flex-col mob:portrait:items-start mob:portrait:gap-[0.2em] ${
+              isRTL
+                ? 'text-[clamp(3.2rem,min(8.6vw,15svh),9.5rem)] mob:text-[min(16vw,17svh)]'
+                : 'text-[clamp(2.6rem,min(7.2vw,14.5svh),8.5rem)] mob:text-[min(12.2vw,15.5svh)]'
+            }`}
+          >
+            <div
+              data-hero-mark-slot
+              aria-hidden={!reduced || undefined}
+              className={`relative aspect-[1007/882] shrink-0 mob:portrait:h-auto mob:portrait:w-[min(62vw,46svh)] ${isRTL ? 'h-[3em]' : 'h-[2.6em]'}`}
             >
-              {t.hero.lines.map((line, i) => (
-                <span key={`${lang}-${i}`} data-line className={`block ${i === 1 ? 'ps-[0.9em]' : ''}`}>
-                  {line}
-                </span>
-              ))}
-            </h1>
+              {reduced && <BahrMark className="h-full" />}
+              <span
+                data-mark-shadow
+                aria-hidden
+                className="pointer-events-none absolute inset-x-[8%] -bottom-[7%] h-[9%] rounded-[50%] bg-[radial-gradient(closest-side,rgba(11,47,128,0.28),transparent)] blur-[6px]"
+              />
+            </div>
+            <div data-headline className="min-w-0 will-change-transform">
+              <h1
+                id="hero-title"
+                ref={headline}
+                className={`font-display text-[1em] font-bold ${
+                  isRTL ? 'leading-[1.15] mob:leading-[1.22]' : 'leading-[0.92] tracking-[-0.035em] [&_.word]:whitespace-nowrap'
+                }`}
+              >
+                {t.hero.lines.map((line, i) => (
+                  <span key={`${lang}-${i}`} data-line className={`block ${i === 1 ? 'ps-[0.9em]' : ''}`}>
+                    {line}
+                  </span>
+                ))}
+              </h1>
+            </div>
           </div>
 
           <div data-cue className="flex items-end justify-between gap-6">
@@ -241,7 +249,7 @@ export function Hero() {
             <div>
               <a
                 href="#agency"
-                className="bob flex min-h-11 items-center gap-3 text-sm font-medium"
+                className="bob flex min-h-12 items-center gap-3 text-sm font-medium"
                 onClick={(e) => {
                   e.preventDefault()
                   scrollToTarget('#agency', { duration: 2.4 })
