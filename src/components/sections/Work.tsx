@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react'
 import { AnimatePresence, m, useMotionValue, useSpring } from 'motion/react'
-import { gsap, useGSAP } from '../../lib/gsap'
+import { gsap, ScrollTrigger, useGSAP } from '../../lib/gsap'
 import { useLang } from '../../lib/i18n'
-import { useFinePointer, useReducedMotion } from '../../lib/hooks'
+import { useFinePointer, useReducedMotion, useSeenOnce } from '../../lib/hooks'
 import { WORK_URL, type Project } from '../../content/en'
+import { MiniSite } from '../ui/MiniSite'
 
 const EXPO = [0.16, 1, 0.3, 1] as const
 type Portal = { x: number; y: number; project: Project; phase: 'in' | 'out' }
@@ -22,6 +23,7 @@ export function Work() {
   const list = useRef<HTMLUListElement>(null)
   const [active, setActive] = useState<number | null>(null)
   const [portal, setPortal] = useState<Portal | null>(null)
+  const listSeen = useSeenOnce(list)
 
   // cursor-follow glow (relative to list) + floating preview card (viewport)
   const gx = useMotionValue(0)
@@ -65,6 +67,22 @@ export function Work() {
     { scope: root, dependencies: [lang], revertOnUpdate: true },
   )
 
+  // Touch: no hover — the row that reaches the middle of the screen lights up and shows its preview.
+  useGSAP(
+    () => {
+      if (fine) return
+      gsap.utils.toArray<HTMLElement>('[data-row]', root.current).forEach((row, i) =>
+        ScrollTrigger.create({
+          trigger: row,
+          start: 'top 60%',
+          end: 'bottom 40%',
+          onToggle: (self) => setActive((a) => (self.isActive ? i : a === i ? null : a)),
+        }),
+      )
+    },
+    { scope: root, dependencies: [fine, lang], revertOnUpdate: true },
+  )
+
   const onMove = (e: React.PointerEvent) => {
     const r = list.current?.getBoundingClientRect()
     if (r) {
@@ -88,7 +106,7 @@ export function Work() {
       id="work"
       ref={root}
       aria-labelledby="work-title"
-      className="relative z-10 py-[18vh] ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)]"
+      className="relative z-10 py-[18svh] mob:py-[10svh] ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)]"
     >
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div className="flex flex-col gap-6">
@@ -110,7 +128,7 @@ export function Work() {
 
       <ul
         ref={list}
-        className="relative mt-[10vh]"
+        className="relative mt-[10svh] mob:mt-8"
         onPointerMove={fine ? onMove : undefined}
         onPointerLeave={() => setActive(null)}
       >
@@ -152,7 +170,7 @@ export function Work() {
                 <span
                   className={`font-display block text-[clamp(2.1rem,6.5vw,6rem)] leading-[1] font-bold tracking-[-0.03em] transition-[color,translate,text-shadow,opacity] duration-500 ease-[var(--ease-expo)] group-hover:translate-x-3 group-hover:text-glow-bright group-hover:[text-shadow:0_0_40px_rgba(61,108,240,0.7)] rtl:group-hover:-translate-x-3 ${
                     active !== null && active !== i ? 'opacity-35' : ''
-                  }`}
+                  } ${!fine && active === i ? 'text-glow-bright [text-shadow:0_0_28px_rgba(61,108,240,0.6)]' : ''}`}
                 >
                   {p.name}
                 </span>
@@ -161,11 +179,23 @@ export function Work() {
                 {p.sector}
                 {p.note && <span className="ms-2 rounded-full border border-[var(--line)] px-2 py-0.5 text-xs">{p.note}</span>}
               </span>
-              <span data-rin className="col-start-3 row-start-1 flex items-center gap-4 text-sm tabular-nums sm:col-start-4">
-                <span className="hidden sm:inline">{p.year}</span>
+              <span data-rin className="col-start-3 row-start-1 flex items-center gap-4 text-sm tabular-nums sm:col-start-4 mob:row-span-2">
+                <span className="hidden sm:inline mob:hidden">{p.year}</span>
+                {/* phones: the preview lives in the row and lights up when the row reaches the centre */}
                 <span
                   aria-hidden
-                  className="flex size-10 shrink-0 items-center justify-center rounded-full border border-current transition-colors duration-300 group-hover:border-glow group-hover:bg-glow group-hover:text-white rtl:-scale-x-100"
+                  className={`relative hidden w-[5.75rem] overflow-hidden rounded-lg border border-white/15 transition-[opacity,filter,transform,box-shadow] duration-500 mob:block ${
+                    active === i ? 'scale-100 opacity-100 shadow-[0_0_30px_-6px_rgba(61,108,240,0.9)]' : 'scale-95 opacity-50 saturate-50'
+                  }`}
+                >
+                  {listSeen ? <MiniSite project={p} index={i} /> : <span className="block aspect-[16/10] bg-[#0b1630]" />}
+                  <span className="absolute end-1 top-1 flex size-5 items-center justify-center rounded-full bg-glow text-[0.6rem] text-white rtl:-scale-x-100">
+                    ↗
+                  </span>
+                </span>
+                <span
+                  aria-hidden
+                  className="flex size-11 shrink-0 mob:hidden items-center justify-center rounded-full border border-current transition-colors duration-300 group-hover:border-glow group-hover:bg-glow group-hover:text-white rtl:-scale-x-100"
                 >
                   ↗
                 </span>
@@ -181,7 +211,7 @@ export function Work() {
           href={WORK_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="group inline-flex items-center gap-3 border-b border-current pb-1 text-lg font-medium"
+          className="group inline-flex min-h-11 items-center gap-3 border-b border-current text-lg font-medium"
           data-cursor
         >
           {t.work.all}
@@ -203,9 +233,8 @@ export function Work() {
             {active !== null && (
               <m.div
                 key={projects[active].name}
-                className="absolute -top-[140px] left-8 flex h-[280px] w-[380px] items-end overflow-hidden rounded-2xl p-6"
+                className="absolute -top-[140px] left-8 flex h-[238px] w-[380px] items-end overflow-hidden rounded-2xl bg-[#0b1630] p-6"
                 style={{
-                  background: `radial-gradient(120% 90% at 20% 10%, ${projects[active].hue[1]} 0%, transparent 55%), radial-gradient(90% 90% at 90% 100%, ${projects[active].hue[1]}55 0%, transparent 60%), ${projects[active].hue[0]}`,
                   boxShadow: '0 30px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(138,164,255,0.3)',
                 }}
                 initial={{ opacity: 0, scale: 0.85, rotate: -4, filter: 'blur(8px)' }}
@@ -213,7 +242,10 @@ export function Work() {
                 exit={{ opacity: 0, scale: 0.9, rotate: 3, filter: 'blur(6px)' }}
                 transition={{ duration: 0.5, ease: EXPO }}
               >
-                <span className="absolute inset-0 bg-[repeating-linear-gradient(115deg,rgba(255,255,255,0.05)_0_2px,transparent_2px_14px)]" />
+                <span className="absolute inset-0">
+                  <MiniSite project={projects[active]} index={active} className="h-full" />
+                </span>
+                <span className="absolute inset-0 bg-[linear-gradient(to_top,rgba(5,11,18,0.85),transparent_55%)]" />
                 <span className="font-display relative text-5xl leading-[0.95] font-extrabold tracking-[-0.03em] text-white">
                   {projects[active].name}
                 </span>

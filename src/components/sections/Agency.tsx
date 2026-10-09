@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { gsap, SplitText, useGSAP } from '../../lib/gsap'
+import { MOBILE } from '../../lib/hooks'
 import { useLang } from '../../lib/i18n'
 import { Magnetic } from '../ui/Magnetic'
 import { scrollToTarget } from '../../providers/SmoothScroll'
@@ -48,10 +49,11 @@ export function Agency() {
               scrollTrigger: { trigger: q('[data-statement]')[0], start: 'top bottom', end: 'bottom 45%', scrub: 0.6 },
             },
           )
-          // supporting paragraphs: line by line
+          // supporting paragraphs: line by line (phones: whole paragraphs — measuring lines is costly on mobile CPUs)
+          const phone = window.matchMedia(MOBILE).matches
           q('[data-para]').forEach((p) => {
-            const s = SplitText.create(p, { type: 'lines', mask: 'lines', linesClass: 'split-mask', aria: 'none' })
-            gsap.from(s.lines, {
+            const targets = phone ? [p] : SplitText.create(p, { type: 'lines', mask: 'lines', linesClass: 'split-mask', aria: 'none' }).lines
+            gsap.from(targets, {
               yPercent: 100,
               opacity: 0,
               duration: 1.2,
@@ -78,7 +80,7 @@ export function Agency() {
       id="agency"
       ref={root}
       aria-labelledby="agency-title"
-      className="relative z-10 pt-[18vh] pb-[16vh] motion-safe:-mt-[45svh] ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)]"
+      className="relative z-10 pt-[18svh] pb-[16svh] mob:pt-[14svh] mob:pb-[9svh] motion-safe:-mt-[45svh] motion-safe:mob:-mt-[24svh] ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)]"
     >
       <p className="kicker" data-fade>
         <span dir="ltr">{t.agency.index}</span> / {t.agency.kicker}
@@ -93,7 +95,7 @@ export function Agency() {
         {t.agency.title}
       </h2>
 
-      <div className="mt-[12vh] grid gap-12 lg:grid-cols-12">
+      <div className="mt-[12svh] grid gap-12 lg:grid-cols-12 mob:mt-10 mob:gap-8">
         <p
           className={`font-display font-semibold lg:col-span-7 ${
             isRTL ? 'text-[clamp(1.9rem,4.2vw,3.6rem)] leading-[1.45]' : 'text-[clamp(2rem,4.4vw,4rem)] leading-[1.05] tracking-[-0.02em]'

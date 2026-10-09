@@ -1,8 +1,8 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { m } from 'motion/react'
-import { gsap, ScrollTrigger, SplitText, useGSAP, EASE_SCRUB } from '../../lib/gsap'
+import { gsap, SplitText, useGSAP, EASE_SCRUB } from '../../lib/gsap'
 import { useLang } from '../../lib/i18n'
-import { useInView, usePageVisible, useReducedMotion } from '../../lib/hooks'
+import { isLowEnd, isTouch, MOBILE, useInView, usePageVisible, useReducedMotion } from '../../lib/hooks'
 import { heroState, INTRO_DONE, isIntroDone } from './heroState'
 import { scrollToTarget } from '../../providers/SmoothScroll'
 
@@ -36,6 +36,8 @@ export function Hero() {
   // load when idle. WebGL support is only probed at that moment (creating a context is not free).
   useEffect(() => {
     if (reduced) return
+    // phones that are low on memory/cores (or in data-saver) keep the CSS water — it's designed to stand on its own
+    if (isTouch() && isLowEnd()) return
     if (glRequested) {
       // remount after a language switch: bring the water back once the page has settled
       const id = window.setTimeout(() => webglAvailable() && setLoadGL(true), 900)
@@ -119,20 +121,22 @@ export function Hero() {
     { scope: section, dependencies: [lang, reduced], revertOnUpdate: true },
   )
 
-  // Pinned, scrubbed "breaking the surface" (~100vh)
+  // Pinned, scrubbed "breaking the surface" (~100vh on desktop, a short ~65svh dip on phones — no scroll-jacking)
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
-      mm.add('(prefers-reduced-motion: no-preference)', () => {
+      mm.add({ motion: '(prefers-reduced-motion: no-preference)', phone: MOBILE }, (ctx) => {
+        if (!ctx.conditions?.motion) return
+        const phone = !!ctx.conditions.phone
         const q = gsap.utils.selector(section)
         const tl = gsap.timeline({
           defaults: { ease: EASE_SCRUB },
           scrollTrigger: {
             trigger: pin.current,
             start: 'top top',
-            end: '+=100%',
+            end: phone ? '+=65%' : '+=100%',
             pin: true,
-            scrub: 0.9,
+            scrub: phone ? 0.4 : 0.9,
             onUpdate: (self) => (heroState.progress = self.progress),
             onLeave: () => (heroState.progress = 1),
             onLeaveBack: () => (heroState.progress = 0),
@@ -153,15 +157,13 @@ export function Hero() {
           heroState.progress = 0
         }
       })
-      // fonts / language changes alter layout
-      ScrollTrigger.refresh()
     },
     { scope: section, dependencies: [lang], revertOnUpdate: true },
   )
 
   return (
     <section id="top" ref={section} aria-labelledby="hero-title" className="relative">
-      <div ref={pin} className="relative h-[100svh] min-h-[560px] overflow-hidden">
+      <div ref={pin} className="relative h-[100svh] overflow-hidden desk:min-h-[560px]">
         {/* water */}
         <div data-water className="absolute inset-0" aria-hidden>
           <div data-css-surface className="water-fallback absolute inset-0 origin-top overflow-hidden" />
@@ -181,7 +183,7 @@ export function Hero() {
           {/* meniscus: the bright line of the surface sweeping past the lens */}
           <div
             data-waterline
-            className="absolute inset-x-[-5%] top-full h-[38vh] opacity-0"
+            className="absolute inset-x-[-5%] top-full h-[38svh] opacity-0"
             style={{
               background:
                 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 46%, rgba(230,240,240,0.95) 50%, rgba(159,183,196,0.5) 62%, rgba(159,183,196,0) 100%)',
@@ -191,7 +193,7 @@ export function Hero() {
         </div>
 
         {/* content */}
-        <div className="relative z-10 flex h-full flex-col justify-between pt-28 pb-10 ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)] text-ink">
+        <div className="relative z-10 flex h-full flex-col justify-between pt-28 pb-10 ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)] text-ink mob:pt-[calc(4.25rem+var(--safe-top))] mob:pb-[calc(1rem+var(--safe-bottom))]">
           <div data-meta className="flex flex-wrap items-start justify-between gap-4 text-sm">
             <p className="max-w-[22rem] font-medium">{t.hero.meta}</p>
             <p dir="ltr" className="hidden tabular-nums text-ink/60 sm:block">
@@ -205,8 +207,8 @@ export function Hero() {
               ref={headline}
               className={`font-display font-bold ${
                 isRTL
-                  ? 'text-[clamp(3.4rem,12vw,10.5rem)] leading-[1.15]'
-                  : 'text-[clamp(2.6rem,10.2vw,10rem)] leading-[0.92] tracking-[-0.035em] [&_.word]:whitespace-nowrap'
+                  ? 'text-[clamp(3.4rem,12vw,10.5rem)] leading-[1.15] mob:text-[min(16vw,17svh)] mob:leading-[1.22]'
+                  : 'text-[clamp(2.6rem,10.2vw,10rem)] leading-[0.92] tracking-[-0.035em] mob:text-[min(12.2vw,15.5svh)] [&_.word]:whitespace-nowrap'
               }`}
             >
               {t.hero.lines.map((line, i) => (
@@ -218,13 +220,13 @@ export function Hero() {
           </div>
 
           <div data-cue className="flex items-end justify-between gap-6">
-            <span className="hidden text-xs uppercase tracking-[0.25em] text-ink/55 sm:block rtl:tracking-normal">
+            <span className="hidden text-xs uppercase tracking-[0.25em] text-ink/55 sm:block mob:hidden rtl:tracking-normal">
               0 m — {t.depth.labels[0]}
             </span>
             <div>
               <a
                 href="#agency"
-                className="bob flex items-center gap-3 text-sm font-medium"
+                className="bob flex min-h-11 items-center gap-3 text-sm font-medium"
                 onClick={(e) => {
                   e.preventDefault()
                   scrollToTarget('#agency', { duration: 2.4 })

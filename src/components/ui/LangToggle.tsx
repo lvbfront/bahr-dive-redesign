@@ -1,14 +1,14 @@
 import { AnimatePresence, m } from 'motion/react'
 import { useLang } from '../../lib/i18n'
 
-export function LangToggle() {
+export function LangToggle({ className = '' }: { className?: string }) {
   const { t, lang, toggle } = useLang()
   return (
     <button
       type="button"
       onClick={toggle}
       aria-label={t.a11y.langSwitch}
-      className="relative flex h-11 min-w-11 items-center justify-center overflow-hidden rounded-full border border-current px-3 text-sm font-semibold"
+      className={`relative flex h-11 min-w-11 items-center justify-center overflow-hidden rounded-full border border-current px-3 text-sm font-semibold ${className}`}
       data-cursor
     >
       <AnimatePresence mode="popLayout" initial={false}>

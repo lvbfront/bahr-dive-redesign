@@ -1,7 +1,7 @@
 import { useEffect, type ReactNode } from 'react'
 import Lenis from 'lenis'
 import { gsap, ScrollTrigger } from '../lib/gsap'
-import { useReducedMotion } from '../lib/hooks'
+import { useReducedMotion, useTouch } from '../lib/hooks'
 import { diveStore } from '../lib/dive'
 
 let lenis: Lenis | null = null
@@ -18,16 +18,19 @@ export function scrollToTarget(target: string | number | HTMLElement, opts: { du
     })
   } else {
     const top = typeof el === 'number' ? el : el.getBoundingClientRect().top + window.scrollY
-    window.scrollTo({ top, behavior: 'auto' })
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    window.scrollTo({ top, behavior: calm ? 'auto' : 'smooth' })
   }
 }
 
-/** Lenis → GSAP ticker → ScrollTrigger.update. Disabled under prefers-reduced-motion. */
+/** Lenis → GSAP ticker → ScrollTrigger.update. Desktop only: off under prefers-reduced-motion and on touch devices,
+ * where native scrolling (momentum, rubber-band) always feels better than any smoothing. */
 export function SmoothScroll({ children }: { children: ReactNode }) {
   const reduced = useReducedMotion()
+  const touch = useTouch()
 
   useEffect(() => {
-    if (reduced) return
+    if (reduced || touch) return
     const instance = new Lenis({ lerp: 0.09, wheelMultiplier: 0.9, touchMultiplier: 1.4 })
     lenis = instance
     ;(window as unknown as { __lenis?: Lenis }).__lenis = instance
@@ -43,7 +46,7 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
       instance.destroy()
       lenis = null
     }
-  }, [reduced])
+  }, [reduced, touch])
 
   return <>{children}</>
 }

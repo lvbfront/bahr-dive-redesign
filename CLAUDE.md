@@ -129,7 +129,60 @@ src/
     never in the hero, and is never upscaled.
   - The owner's attachments did not reach the build container, so neither the screenshots nor the mark are committed
     yet. The code paths were verified with placeholders and with a synthetic test mark, which was not shipped.
+- **Phones are their own design** (see README → Mobile): native scroll, short pin, bottom thumb dock + bottom-sheet menu,
+  slim gutter gauge, in-view equivalents for every hover. "Phone" = `MOBILE` in `src/lib/hooks.ts` = the `mob:` variant.
+- **Project frames** in Expertise are designed abstract mini-sites (`src/components/ui/MiniSite.tsx`), never fake
+  screenshots; a real file in `public/work/<slug>.webp` replaces one automatically. Also used as the work-row previews.
 - Default language EN; choice persisted in `localStorage` and applied by an inline script before first paint (no flash).
+
+## Mobile audit (2026-10-09, before fixes)
+Emulated with touch + mobile UA: iPhone SE 375×667, iPhone 15 393×852, Pixel 7 412×915, landscape 852×393 — EN + AR,
+stepped scroll (0.85 screen per step) + fast flicks, screenshots of every step (88 shots), plus automated checks for
+overflow, meter overlap and tap-target size.
+
+1. **Scroll feel** — Lenis is instantiated on touch devices too (native touch, but it still owns wheel/keys, sets
+   `html.lenis` and runs every frame). Should be plain native scrolling on touch.
+2. **Hero pin** — 100vh pin on phones (200% of the viewport in pin-spacer, 242% in landscape) and the 45svh agency
+   overlap → a near-empty "dead water" screen after the hero on every phone.
+3. **Dead space** — half-empty screens after "Explore our expertise" (before the clients) and after "All eight projects"
+   (contact is `min-h-[100svh]` + centred).
+4. **Hero type** — headline only ~42 px on SE with a large empty area; in landscape it overflows the bottom of the
+   viewport ("approach" clipped).
+5. **Viewport units** — section paddings and heights in `vh` (iOS address bar resizes them); no safe-area handling
+   (notch / home bar) for nav, bottom UI or footer.
+6. **Depth meter** — the bottom-left pill covers content on every phone ("Scroll to dive", "Beyond the surface",
+   paragraphs, project rows, "Back to surface", footer). In landscape the desktop vertical meter shows and its numbers
+   overflow the 393 px height.
+7. **Tap targets < 44 px** — wordmark link (22 px tall), "Scroll to dive" (36), "All eight projects" (33), email (27),
+   LinkedIn (27), work-row arrows (40), landscape "Let's talk" (42).
+8. **Thumb reach** — menu + language buttons sit in the top corner; the menu closes from the top.
+9. **Hover-only features** — work-row preview card and glow never appear on touch; client-name highlight is hover-only.
+10. **Expertise card (web)** — drifting frames are tiny (112 px) placeholders, cut at the card edges, names only.
+11. **Landscape is treated as desktop** (≥ 768 px wide): desktop meter, rail padding, "Let's talk" pill, long pin.
+12. **Gutters** — `--rail` adds ~22 px extra start padding on phones (content not centred, 20 + 22 px start vs 20 px end).
+13. **Performance** — WebGL water at DPR 1.5 / 140² grid on phones, 34 snow particles, nav `backdrop-blur` over a
+    moving page; no low-end fallback.
+14. **Arabic** — body copy same size as EN (Plex Arabic reads small at 16 px), kicker/labels small.
+15. No horizontal scroll found (EN + AR, all four sizes) and no console errors — keep it that way.
+
+## Mobile pass — resolution (re-audited after fixes, same devices/steps)
+| # | Audit item | Fix | Verified |
+|---|---|---|---|
+| 1 | Lenis on touch | `SmoothScroll` skips Lenis on `(hover: none), (pointer: coarse)`; velocity for snow/currents comes from ScrollTrigger | audit: `lenis=false` on all phones |
+| 2 | Long hero pin + dead screen | phones: pin `+=65%`, scrub 0.4, agency overlap 24svh (desk 45svh); `desk:min-h-[560px]` only | pin-spacer 165% (was 200–242%) |
+| 3 | Dead space | phone rhythm: section padding 9–14svh, contact `mob:min-h-0` top-aligned, tighter gaps | screenshots: no half-empty screens |
+| 4 | Hero type | `mob:text-[min(12.2vw,15.5svh)]` (AR `min(16vw,17svh)`), mobile paddings; static shell mirrors it | SE / 15 / Pixel / landscape fit |
+| 5 | vh / safe areas | every `vh` → `svh`; `--safe-top/bottom`, gutter `max(clamp(…), env(safe-area-inset-*))` | grep: no `vh` left |
+| 6 | Meter covering content | phones: slim vertical gauge inside the inline-start gutter (number rotated, 7 px dot, glow at seabed) | audit: 0 overlaps |
+| 7 | Small tap targets | wordmark, cue, links, email/LinkedIn, row arrows, footer → ≥ 44 px | audit: 0 targets < 44 px |
+| 8 | Thumb reach | bottom dock (lang + menu, 48 px) + bottom-sheet menu closing from the same button; dock hides on scroll-down | menu/sheet/link/lang tested by tap, EN + AR |
+| 9 | Hover-only | touch: work row at screen centre lights + in-row mini-site preview; client name at centre lights, tap pauses a row; cursor off | screenshots |
+| 10 | Expertise frames | designed abstract mini-sites (4 layouts, Bahr palette) with "Name — sector", 152 px strip below the current lines, lazy | screenshots |
+| 11 | Landscape = desktop | `mob`/`desk` variants (block-form `@custom-variant`; the one-line form silently kept only the first query) + `MOBILE` query in JS | landscape gets dock, slim meter, short pin |
+| 12 | Rail on phones | `--rail: 0` on phones | content symmetric |
+| 13 | Performance | DPR ≤ 1.25 on touch, 96² water grid, CSS water on low-end/data-saver, 18 snow particles, lazy strip/thumbs, phone paragraphs fade whole (no line measuring), one post-mount refresh | Lighthouse mobile 84–87 |
+| 14 | Arabic size | phones: AR body 17 px / 1.85 | screenshots |
+| 15 | H-scroll / errors | — | 0 px overflow, 0 errors (8 device/lang combos) |
 
 ## Status
 **Shipped.** (all phases complete — see git history)
@@ -137,8 +190,10 @@ src/
 - Repo: https://github.com/lvbfront/bahr-dive-redesign (`main`; work branch `claude/nice-faraday-nzc3xg`)
 - Live: deploys on push once the repo is imported in Vercel (defaults: Vite / `npm run build` / `dist`). The Vercel CLI
   was not available in the build container, so the first deploy is a one-time manual import.
-- Lighthouse (local prod build, simulated throttling): mobile Performance 85–88, desktop 97; Accessibility,
+- Lighthouse (local prod build, simulated throttling): mobile Performance 84–87, desktop 94–97; Accessibility,
   Best practices and SEO 100 on both.
+- 3rd pass (mobile): full phone audit + fixes, see "Mobile audit" and "Mobile pass — resolution" above; language switch
+  re-verified 10× from the phone dock, desktop panels / language switch / reduced motion re-checked.
 - 2nd pass: language switch verified 10× in a row at every section (incl. inside both pins), desktop + mobile, no errors;
   expertise panel 03 text verified at 1024/1440/1920 in EN + AR; Lighthouse mobile 87–89.
 - Verified with Playwright screenshots: EN + AR, 1440 / 1024 / 390 / 375 widths, reduced motion, menu, language toggle,

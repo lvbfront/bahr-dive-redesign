@@ -14,12 +14,39 @@ export function Clients() {
     () => {
       const rows = gsap.utils.toArray<HTMLElement>('[data-row]', root.current)
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const touch = window.matchMedia('(hover: none), (pointer: coarse)').matches
+      // touch has no hover: the name drifting through the middle of the screen lights up instead
+      const names = rows.map((row) => Array.from(row.querySelectorAll<HTMLElement>('[data-name]')))
+      let litFrame = 0
+      const light = () => {
+        const mid = window.innerWidth / 2
+        names.forEach((list) => {
+          let best: HTMLElement | null = null
+          let bestD = Infinity
+          for (const el of list) {
+            const r = el.getBoundingClientRect()
+            const d = Math.abs(r.left + r.width / 2 - mid)
+            if (d < bestD) {
+              bestD = d
+              best = el
+            }
+          }
+          for (const el of list) el.toggleAttribute('data-lit', el === best)
+        })
+      }
       const states = rows.map((row, i) => {
         const dir = (i === 0 ? -1 : 1) * (isRTL ? -1 : 1)
         const state = { x: 0, speed: 1, half: row.scrollWidth / 2, dir }
         if (dir > 0) state.x = -state.half / 2
-        row.addEventListener('mouseenter', () => gsap.to(state, { speed: 0, duration: 0.7, ease: 'power2.out', overwrite: true }))
-        row.addEventListener('mouseleave', () => gsap.to(state, { speed: 1, duration: 0.9, ease: 'power2.inOut', overwrite: true }))
+        const pause = () => gsap.to(state, { speed: 0, duration: 0.7, ease: 'power2.out', overwrite: true })
+        const resume = () => gsap.to(state, { speed: 1, duration: 0.9, ease: 'power2.inOut', overwrite: true })
+        if (touch) {
+          // touch: tap a current to hold it still, tap again to let it drift
+          row.addEventListener('click', () => (state.speed > 0.5 ? pause() : resume()))
+        } else {
+          row.addEventListener('mouseenter', pause)
+          row.addEventListener('mouseleave', resume)
+        }
         return { row, state }
       })
       const setters = states.map(({ row }) => gsap.quickSetter(row, 'x', 'px'))
@@ -39,6 +66,7 @@ export function Clients() {
           state.x = gsap.utils.wrap(-state.half, 0, state.x)
           setters[i](state.x)
         })
+        if (touch && ++litFrame % 8 === 0) light()
       }
       gsap.ticker.add(tick)
 
@@ -78,7 +106,7 @@ export function Clients() {
   )
 
   return (
-    <section id="clients" ref={root} aria-labelledby="clients-title" className="relative z-10 overflow-hidden py-[16vh]">
+    <section id="clients" ref={root} aria-labelledby="clients-title" className="relative z-10 overflow-hidden py-[16svh] mob:py-[9svh]">
       <div className="ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)]">
         <h2 id="clients-title" className="kicker">
           {t.clients.kicker}
@@ -101,7 +129,7 @@ export function Clients() {
                     key={`${k}-${name}`}
                     className={`group flex shrink-0 items-center gap-[clamp(1.5rem,4vw,4rem)] pe-[clamp(1.5rem,4vw,4rem)] ${r === 1 ? 'text-muted' : ''}`}
                   >
-                    <span className="font-display cursor-default text-[clamp(2.6rem,7.5vw,7.5rem)] leading-none font-bold tracking-[-0.03em] transition-[color,text-shadow] duration-500 hover:text-glow-bright hover:[text-shadow:0_0_32px_rgba(61,108,240,0.8)]">
+                    <span data-name className="font-display cursor-default text-[clamp(2.6rem,7.5vw,7.5rem)] leading-none font-bold tracking-[-0.03em] transition-[color,text-shadow] duration-700 hover:text-glow-bright hover:[text-shadow:0_0_32px_rgba(61,108,240,0.8)] data-[lit]:text-glow-bright data-[lit]:[text-shadow:0_0_32px_rgba(61,108,240,0.8)]">
                       {name}
                     </span>
                     <span className="size-2.5 rounded-full border border-current opacity-50" />
@@ -115,10 +143,10 @@ export function Clients() {
 
       <dl
         data-stats
-        className="mt-[14vh] grid gap-10 border-t border-[var(--line)] pt-10 ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)] sm:grid-cols-3"
+        className="mt-[14svh] grid gap-10 mob:mt-12 mob:grid-cols-2 mob:gap-x-4 mob:gap-y-8 border-t border-[var(--line)] pt-10 ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)] sm:grid-cols-3"
       >
         {t.clients.stats.map((s, i) => (
-          <div key={i} data-stat className="flex flex-col gap-2">
+          <div key={i} data-stat className={`flex flex-col gap-2 ${i === 2 ? 'mob:col-span-2' : ''}`}>
             <dt className="order-2 max-w-[22ch] text-sm text-muted">{s.label}</dt>
             <dd className="font-display order-1 text-[clamp(3rem,6vw,5.5rem)] leading-none font-bold tracking-[-0.03em]">
               {s.value !== null ? (

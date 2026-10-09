@@ -1,6 +1,7 @@
 import { gsap, ScrollTrigger, useGSAP } from '../../lib/gsap'
 import { DEPTH_COLORS, SECTIONS, diveStore } from '../../lib/dive'
 import { useLang } from '../../lib/i18n'
+import { getLenis } from '../../providers/SmoothScroll'
 
 function luminance(color: string) {
   // splitColor handles both "#hex" and "rgba()" (gsap.utils.interpolate returns either)
@@ -68,15 +69,24 @@ export function DiveController() {
         start: 0,
         end: 'max',
         refreshPriority: -20,
-        onUpdate: (self) => update(self.scroll()),
+        onUpdate: (self) => {
+          // native (touch) scrolling: derive a Lenis-like velocity for the snow and the client currents
+          if (!getLenis()) diveStore.live.velocity = self.getVelocity() / 60
+          update(self.scroll())
+        },
         onRefresh: (self) => {
           depthTargets = Array.from(document.querySelectorAll<HTMLElement>('[data-depth-var]'))
           update(self.scroll())
         },
       })
       update(window.scrollY)
+      const decay = () => {
+        if (!getLenis()) diveStore.live.velocity *= 0.9
+      }
+      gsap.ticker.add(decay)
 
       return () => {
+        gsap.ticker.remove(decay)
         master.kill()
         anchorTriggers.forEach((t) => t.kill())
       }

@@ -13,7 +13,7 @@ export function MarineSnow() {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
+    const dpr = Math.min(window.devicePixelRatio || 1, window.matchMedia('(pointer: coarse)').matches ? 1.25 : 1.5)
     let w = 0
     let h = 0
     type P = { x: number; y: number; r: number; v: number; a: number; s: number }
@@ -24,7 +24,7 @@ export function MarineSnow() {
       canvas.width = Math.round(w * dpr)
       canvas.height = Math.round(h * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      const count = w < 768 ? 34 : 70
+      const count = w < 768 ? 18 : window.matchMedia('(pointer: coarse)').matches ? 30 : 70
       ps = Array.from({ length: count }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,

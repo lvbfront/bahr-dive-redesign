@@ -39,17 +39,17 @@
   <body>
     <div id="root">
       <!-- Static first paint of the hero (replaced when React mounts) — keeps FCP/LCP fast. -->
-      <div class="relative h-[100svh] min-h-[560px] overflow-hidden" aria-hidden="true">
+      <div class="relative h-[100svh] overflow-hidden desk:min-h-[560px]" aria-hidden="true">
         <div class="water-fallback absolute inset-0"></div>
-        <div class="relative z-10 flex h-full flex-col justify-between pt-28 pb-10 ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)] text-ink">
+        <div class="relative z-10 flex h-full flex-col justify-between pt-28 pb-10 ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)] text-ink mob:pt-[calc(4.25rem+var(--safe-top))] mob:pb-[calc(1rem+var(--safe-bottom))]">
           <div class="flex flex-wrap items-start justify-between gap-4 text-sm">
             <p class="max-w-[22rem] font-medium"><span class="rtl:hidden">Independent digital agency — Jeddah, Saudi Arabia</span><span class="ltr:hidden">وكالة رقمية مستقلة — جدة، المملكة العربية السعودية</span></p>
           </div>
           <div>
-            <p class="font-display font-bold text-[clamp(2.6rem,10.2vw,10rem)] leading-[0.92] tracking-[-0.035em] rtl:hidden">
+            <p class="font-display font-bold text-[clamp(2.6rem,10.2vw,10rem)] leading-[0.92] tracking-[-0.035em] mob:text-[min(12.2vw,15.5svh)] rtl:hidden">
               <span class="block">A deeper</span><span class="block ps-[0.9em]">creative</span><span class="block">approach</span>
             </p>
-            <p class="font-display font-bold text-[clamp(3.4rem,12vw,10.5rem)] leading-[1.15] ltr:hidden">
+            <p class="font-display font-bold text-[clamp(3.4rem,12vw,10.5rem)] leading-[1.15] mob:text-[min(16vw,17svh)] mob:leading-[1.22] ltr:hidden">
               <span class="block">عمق</span><span class="block ps-[0.9em]">إبداعي</span><span class="block">مختلف</span>
             </p>
           </div>

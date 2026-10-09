@@ -5,6 +5,9 @@ import * as THREE from 'three'
 import { heroState } from './heroState'
 
 const RIPPLES = 12
+const COARSE = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
+/** DPR cap: 1.5 on desktop, 1.25 on touch devices */
+const MAX_DPR = COARSE ? 1.25 : 1.5
 
 const vertex = /* glsl */ `
   uniform float uTime;
@@ -155,7 +158,8 @@ function Water() {
     }
   })
 
-  const seg = small ? 140 : 220
+  // phones: a lighter grid (still smooth at their size)
+  const seg = small || COARSE ? 96 : 220
   return (
     <mesh ref={mesh} rotation-x={-Math.PI / 2} position={[0, 0, -6]}>
       <planeGeometry args={[44, 36, seg, seg]} />
@@ -166,7 +170,7 @@ function Water() {
 
 export default function WaterCanvas({ active, onReady }: { active: boolean; onReady: () => void }) {
   // DPR capped at 1.5; drei's PerformanceMonitor drops it to 1 on devices that can't hold the frame rate.
-  const [dpr, setDpr] = useState(Math.min(window.devicePixelRatio || 1, 1.5))
+  const [dpr, setDpr] = useState(Math.min(window.devicePixelRatio || 1, MAX_DPR))
   return (
     <Canvas
       dpr={dpr}
@@ -176,7 +180,7 @@ export default function WaterCanvas({ active, onReady }: { active: boolean; onRe
       onCreated={() => requestAnimationFrame(onReady)}
       aria-hidden
     >
-      <PerformanceMonitor onDecline={() => setDpr(1)} onIncline={() => setDpr(Math.min(window.devicePixelRatio || 1, 1.5))} />
+      <PerformanceMonitor onDecline={() => setDpr(1)} onIncline={() => setDpr(Math.min(window.devicePixelRatio || 1, MAX_DPR))} />
       <Water />
     </Canvas>
   )

@@ -140,7 +140,7 @@ function HorizontalExpertise() {
           <article
             key={s.key}
             data-panel
-            className="relative grid h-[74vh] w-[72vw] max-w-[1200px] shrink-0 grid-cols-2 overflow-hidden rounded-[28px] border border-[var(--line)] bg-white/[0.03] backdrop-blur-[2px]"
+            className="relative grid h-[74svh] w-[72vw] max-w-[1200px] shrink-0 grid-cols-2 overflow-hidden rounded-[28px] border border-[var(--line)] bg-white/[0.03] backdrop-blur-[2px]"
           >
             <div className="flex flex-col justify-between p-[clamp(1.5rem,3vw,3rem)]">
               <span data-in dir="ltr" className="font-display text-sm text-muted rtl:text-end">
@@ -193,7 +193,7 @@ function StackedExpertise() {
   )
 
   return (
-    <div ref={root} className="py-[14vh] ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)]">
+    <div ref={root} className="py-[14svh] mob:py-[9svh] ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)]">
       <Header />
       <LayoutGroup>
         <ul className="mt-12 flex flex-col gap-4">
@@ -241,7 +241,7 @@ function StackedExpertise() {
                       transition={{ duration: 0.6, ease: EXPO }}
                     >
                       <div className="flex flex-col gap-5 px-6 pb-6">
-                        <div className="relative h-44 overflow-hidden rounded-2xl border border-[var(--line)]">
+                        <div className={`relative overflow-hidden rounded-2xl border border-[var(--line)] ${s.key === 'web' ? 'h-[10.5rem]' : 'h-44'}`}>
                           <ServiceVisual kind={s.key} variant="card" />
                         </div>
                         <p className="text-muted">{s.body}</p>

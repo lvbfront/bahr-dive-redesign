@@ -18,13 +18,20 @@ darkens to near black, a live depth meter counts down, and the contact call to a
 | ![Selected work at −1,200 m](docs/screenshots/06-work.jpg) | ![The seabed at −3,000 m](docs/screenshots/07-seabed.jpg) |
 | ![Arabic hero](docs/screenshots/08-arabic-hero.jpg) | ![Arabic expertise (RTL)](docs/screenshots/09-arabic-expertise.jpg) |
 
+**On phones** (designed separately, not a shrunk desktop):
+
+| | | |
+|---|---|---|
+| ![Phone hero](docs/screenshots/10-mobile-hero.jpg) | ![Phone work and seabed](docs/screenshots/11-mobile-work.jpg) | ![Phone Arabic expertise](docs/screenshots/12-mobile-arabic-expertise.jpg) |
+
 ## What's in it
 
 - **Global dive system.** A single page-wide ScrollTrigger maps scroll position to the background colour along
   `#e6e6df → #9fb7c4 → #2c5d73 → #0e2a3a → #050b12`, a `--depth` variable and the depth in metres. Text switches from ink
   to light based on the background's luminance, so contrast stays readable at every depth.
 - **Depth meter.** It sits on the inline-start side (left in English, right in Arabic) and shows an eased counter from
-  `0 m` to `−3,000 m` plus the current section label. On mobile it becomes a compact pill.
+  `0 m` to `−3,000 m` plus the current section label. On phones it becomes a slim gauge inside the side margin, so
+  it never covers content.
 - **Light and particles.** Light rays fade as you sink. Below −200 m, sparse "marine snow" drifts upward.
 - **Hero.** A WebGL water surface (React Three Fiber, a custom shader, cursor ripples) is lazy-loaded behind a CSS
   fallback, and the headline paints first.
@@ -38,9 +45,10 @@ darkens to near black, a live depth meter counts down, and the contact call to a
   built only from real facts.
 - **Expertise.** On desktop, a pinned horizontal scroll moves through three panels, each with a hand-made animated
   visual: flowing current lines (web), glowing plankton nodes (AI), and a phone with sonar rings (mobile). In the web
-  panel, screenshots of Bahr's real projects (Alageely, Riyadh Retina, Sycleague, LineUp) drift along the currents
-  like debris carried by the stream. On mobile the panels become accordion cards with Framer Motion layout animation,
-  and the screenshots become a small drifting strip.
+  panel, Bahr's projects (Alageely, Riyadh Retina, Sycleague, LineUp) drift along the currents like debris carried by
+  the stream. Each one is a designed abstract mini-site in Bahr's colours (nav bar, hero block, content lines, a
+  different layout per project), labelled with its name and sector. These are not fake screenshots. On mobile the
+  panels become accordion cards with Framer Motion layout animation, and the frames become a small drifting strip.
 - **Selected work.**
   - Hovering a project row shows a royal-blue glow that follows the cursor, plus a floating preview card.
   - Clicking plays a circle-wipe "portal" and then opens the project on bybahr.com in a new tab.
@@ -74,6 +82,28 @@ Lenis · React Three Fiber + drei · three.js · Vercel
 **Animation rule:** GSAP owns everything linked to scroll, and Framer Motion owns hover, menu, toggle and mount
 animations. The two libraries never animate the same property of the same element.
 
+## Mobile
+
+Phones get their own design, not a shrunk desktop. "Phone" means a narrow screen, or a short touch screen, so landscape
+phones count too.
+
+- **Scrolling.** Scrolling is native: no Lenis and no smoothing on touch. The hero dive is a short pin of about 65svh,
+  Expertise becomes cards, and nothing traps the finger.
+- **Layout.** Heights use `svh`, safe-area insets are respected (notch and home bar), side gutters are 18–20 px, and
+  the type scale is fluid.
+  - The hero size accounts for viewport height, so landscape fits.
+  - Arabic body text is a little larger, with taller line-height.
+- **Thumb zone.** The wordmark stays on top. Language and menu sit in a floating dock at the bottom, and the menu opens
+  as a bottom sheet that closes from the same button. The dock steps aside while you scroll down and comes back when
+  you scroll up. Every tap target is at least 44 px.
+- **No hover on touch.**
+  - The custom cursor is off.
+  - A work row lights up and shows its preview when it reaches the middle of the screen.
+  - The client name drifting through the centre lights up, and tapping a row holds it still.
+- **Lighter rendering.** DPR is capped at 1.25 and the WebGL grid is lighter. Low-end devices or data-saver keep the CSS
+  water, marine snow drops to 18 particles, the intro is shorter and skippable with a tap, and off-screen visuals render
+  lazily.
+
 ## Performance
 
 - `index.html` contains a static, styled copy of the hero, so it appears on the first paint. React, GSAP and Motion
@@ -88,8 +118,8 @@ Lighthouse (local production build, Lighthouse 12 with its default simulated thr
 
 | | Performance | Accessibility | Best practices | SEO |
 |---|---|---|---|---|
-| Mobile | **85–88** | 100 | 100 | 100 |
-| Desktop | **97** | 100 | 100 | 100 |
+| Mobile | **84–87** | 100 | 100 | 100 |
+| Desktop | **94–97** | 100 | 100 | 100 |
 
 ## Run it
 
@@ -122,7 +152,7 @@ restart after you add files.
 
 - **Project screenshots.** Drop `alageely`, `riyadh-retina`, `sycleague` and `lineup` (`.png`, `.jpg` or `.webp`) into
   `public/work/`, then run `npm run images`. That converts them to WebP (max 1280 px wide) and removes the originals.
-  A project without a file shows a framed placeholder with its name.
+  A project without a file shows its designed abstract mini-site instead.
 - **The «بحر» mark.** Run `npm run mark -- path/to/screenshot.png`.
   - It keeps only the blue mark: it drops the light background, the grey contour lines and the black words, softens
     and un-fringes the edges, and crops tightly.

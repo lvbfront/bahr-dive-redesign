@@ -22,7 +22,9 @@ export function Intro() {
       return
     }
     const done = () => setShow(false)
-    const timer = window.setTimeout(done, brandMark ? 1500 : 1350)
+    // phones get a shorter beat; any tap/scroll/key skips it
+    const short = window.matchMedia('(pointer: coarse)').matches
+    const timer = window.setTimeout(done, (brandMark ? 1500 : 1350) - (short ? 350 : 0))
     const skip = () => done()
     window.addEventListener('keydown', skip, { once: true })
     window.addEventListener('wheel', skip, { once: true, passive: true })

@@ -33,8 +33,12 @@ function Page() {
   const reduced = useReducedMotion()
 
   // After a language switch: children have created their triggers → measure, restore position, reveal.
+  // On first mount: one refresh once every section has created its triggers (pins first, then the dive anchors).
   useEffect(() => {
-    if (phase !== 'covered') return
+    if (phase !== 'covered') {
+      const id = requestAnimationFrame(() => ScrollTrigger.refresh())
+      return () => cancelAnimationFrame(id)
+    }
     let id = requestAnimationFrame(() => {
       id = requestAnimationFrame(onPageReady)
     })

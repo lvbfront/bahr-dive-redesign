@@ -65,7 +65,7 @@ export function Contact() {
       id="contact"
       ref={root}
       aria-labelledby="contact-title"
-      className="relative z-10 flex min-h-[100svh] flex-col justify-center overflow-hidden pt-32 pb-16 ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)]"
+      className="relative z-10 flex min-h-[100svh] flex-col justify-center overflow-hidden pt-32 pb-16 mob:min-h-0 mob:justify-start mob:pt-[12svh] mob:pb-12 ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)]"
     >
       {/* faint bioluminescence on the seabed */}
       <div
@@ -136,7 +136,7 @@ export function Contact() {
         </div>
       </div>
 
-      <div className="relative mt-[10vh] grid gap-10 border-t border-[var(--line)] pt-10 md:grid-cols-12">
+      <div className="relative mt-[10svh] grid gap-10 mob:mt-12 border-t border-[var(--line)] pt-10 md:grid-cols-12">
         <p data-cin className="max-w-[44ch] text-lg text-muted md:col-span-6">
           {t.contact.line}
         </p>
@@ -144,7 +144,7 @@ export function Contact() {
           <div className="flex flex-col gap-1">
             <dt className="text-xs uppercase tracking-[0.2em] text-muted rtl:tracking-normal">{t.contact.emailLabel}</dt>
             <dd>
-              <a href={`mailto:${EMAIL}`} dir="ltr" className="font-display text-[clamp(1.4rem,2.6vw,2.2rem)] font-semibold hover:text-glow-bright" data-cursor>
+              <a href={`mailto:${EMAIL}`} dir="ltr" className="font-display inline-flex min-h-11 items-center text-[clamp(1.4rem,2.6vw,2.2rem)] font-semibold break-all hover:text-glow-bright" data-cursor>
                 {EMAIL}
               </a>
             </dd>
@@ -152,7 +152,7 @@ export function Contact() {
           <div className="flex flex-col gap-1">
             <dt className="text-xs uppercase tracking-[0.2em] text-muted rtl:tracking-normal">{t.contact.linkedinLabel}</dt>
             <dd>
-              <a href={LINKEDIN} target="_blank" rel="noopener noreferrer" className="text-lg underline-offset-4 hover:text-glow-bright hover:underline" data-cursor>
+              <a href={LINKEDIN} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-lg underline-offset-4 hover:text-glow-bright hover:underline" data-cursor>
                 linkedin.com/company/bybahr <span className="sr-only">{t.a11y.opensNewTab}</span>
               </a>
             </dd>

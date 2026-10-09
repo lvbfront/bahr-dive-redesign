@@ -13,8 +13,8 @@ export function DepthMeter() {
   const index = useSectionIndex()
   const reduced = useReducedMotion()
   const numRefs = useRef<HTMLSpanElement[]>([])
-  const markerRef = useRef<HTMLDivElement>(null)
-  const fillRef = useRef<HTMLDivElement>(null)
+  const markerRefs = useRef<HTMLDivElement[]>([])
+  const fillRefs = useRef<HTMLDivElement[]>([])
   const pulse = useAnimationControls()
   const seabed = index === 5
 
@@ -34,8 +34,8 @@ export function DepthMeter() {
       const p = Math.min(1, shown / MAX_DEPTH)
       // ease the marker so the shallow sections get room on the gauge
       const visual = Math.pow(p, 0.42)
-      if (markerRef.current) markerRef.current.style.transform = `translateY(${(visual * 100).toFixed(2)}%)`
-      if (fillRef.current) fillRef.current.style.transform = `scaleY(${visual.toFixed(4)})`
+      for (const el of markerRefs.current) if (el) el.style.transform = `translateY(${(visual * 100).toFixed(2)}%)`
+      for (const el of fillRefs.current) if (el) el.style.transform = `scaleY(${visual.toFixed(4)})`
     }
     gsap.ticker.add(tick)
     return () => gsap.ticker.remove(tick)
@@ -53,13 +53,13 @@ export function DepthMeter() {
   return (
     <aside aria-label={t.a11y.depthMeter} className="pointer-events-none fixed z-30 select-none" data-meter>
       {/* desktop: vertical gauge on the inline-start rail */}
-      <div className="fixed inset-y-0 start-0 hidden w-[var(--rail)] flex-col items-center justify-center gap-5 md:flex">
+      <div className="fixed inset-y-0 start-0 hidden w-[var(--rail)] flex-col items-center justify-center gap-5 desk:flex">
         <span className="text-[0.62rem] uppercase tracking-[0.3em] text-muted [writing-mode:vertical-rl] rtl:tracking-normal rtl:text-[0.8rem]">
           {t.a11y.depthMeter}
         </span>
-        <div className="relative h-[38vh] w-px bg-[var(--line)]">
-          <div ref={fillRef} className="absolute inset-0 origin-top bg-current opacity-60" />
-          <div ref={markerRef} className="absolute inset-0">
+        <div className="relative h-[38svh] w-px bg-[var(--line)]">
+          <div ref={(el) => void (el && (fillRefs.current[0] = el))} className="absolute inset-0 origin-top bg-current opacity-60" />
+          <div ref={(el) => void (el && (markerRefs.current[0] = el))} className="absolute inset-0">
             <m.span
               animate={pulse}
               className="absolute -start-[5px] -top-[5px] block size-[11px] rounded-full border border-current bg-[var(--fg-inverse)]"
@@ -76,15 +76,23 @@ export function DepthMeter() {
         </div>
       </div>
 
-      {/* mobile: compact pill bottom inline-start */}
-      <div className="fixed bottom-4 start-4 flex items-center gap-2 rounded-full border border-[var(--line)] px-3 py-1.5 text-xs backdrop-blur-md md:hidden">
-        <span className="relative flex size-2">
-          <span className={`absolute inset-0 rounded-full ${seabed ? 'bg-glow-bright' : 'bg-current'}`} />
-        </span>
-        <span dir="ltr" className="font-display tabular-nums font-semibold">
+      {/* phones: a slim gauge living inside the inline-start gutter — it never sits over content */}
+      <div
+        data-meter-mobile
+        className="fixed top-1/2 hidden w-3 -translate-y-1/2 flex-col items-center gap-2.5 mob:flex"
+        style={{ insetInlineStart: 'max(3px, calc(var(--gutter) - 15px))' }}
+      >
+        <span dir="ltr" className="font-display rotate-180 text-[0.6rem] leading-none font-semibold tabular-nums [writing-mode:vertical-rl]">
           <span ref={(el) => void (el && (numRefs.current[1] = el))}>0</span> {unit}
         </span>
-        <span className="text-muted">· {label}</span>
+        <div className="relative h-[24svh] w-px bg-[var(--line)]">
+          <div ref={(el) => void (el && (fillRefs.current[1] = el))} className="absolute inset-0 origin-top bg-current opacity-60" />
+          <div ref={(el) => void (el && (markerRefs.current[1] = el))} className="absolute inset-0">
+            <span
+              className={`absolute -start-[3px] -top-[3px] block size-[7px] rounded-full ${seabed ? 'bg-glow-bright shadow-[0_0_12px_2px_#3d6cf0]' : 'bg-current'}`}
+            />
+          </div>
+        </div>
       </div>
       <span className="sr-only" aria-live="polite">{label}</span>
     </aside>
