@@ -80,19 +80,10 @@ function HorizontalExpertise() {
         { scaleX: 0 },
         { scaleX: 1, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: () => `+=${distance()}`, scrub: true } },
       )
-      // Panel text reveal + project-frame drift, computed from where each panel actually is on screen.
-      // Deliberately not per-panel ScrollTriggers (containerAnimation start/end can sit beyond the pin's reach,
-      // e.g. the last panel) — this can't miss, and once a panel's text is revealed it stays revealed.
+      // Project-frame drift, computed from where each panel actually is on screen.
+      // Panel TEXT is never animated by scroll: it is plain, always-visible content (a stuck reveal used to leave
+      // panel 03 empty on short laptop viewports).
       const panels = gsap.utils.toArray<HTMLElement>('[data-panel]', root.current)
-      const reveals = panels.map((panel) =>
-        gsap.timeline({ paused: true }).from(panel.querySelectorAll('[data-in]'), {
-          y: 50,
-          opacity: 0,
-          stagger: 0.08,
-          duration: 0.6,
-          ease: 'power2.inOut',
-        }),
-      )
       const drifts = panels.map((panel) =>
         gsap.utils.toArray<HTMLElement>('[data-drift]', panel).map((d) => ({
           x: gsap.quickSetter(d, 'x', 'px') as (v: number) => void,
@@ -105,9 +96,6 @@ function HorizontalExpertise() {
         const vw = window.innerWidth
         panels.forEach((panel, i) => {
           const r = panel.getBoundingClientRect()
-          const visible = Math.min(r.right, vw) - Math.max(r.left, 0)
-          const p = gsap.utils.clamp(0, 1, visible / (Math.min(r.width, vw) * 0.4))
-          if (p > reveals[i].progress()) reveals[i].progress(p)
           const travel = (r.left + r.width / 2 - vw / 2) / vw
           for (const d of drifts[i]) {
             d.x(travel * d.amp)
@@ -115,14 +103,12 @@ function HorizontalExpertise() {
           }
         })
       }
-      const revealAll = () => reveals.forEach((tl) => tl.progress(1))
       tween.eventCallback('onUpdate', sync)
       ScrollTrigger.create({
         trigger: root.current,
         start: 'top bottom',
         end: () => `+=${distance() + window.innerHeight}`,
         onRefresh: sync,
-        onLeave: revealAll,
       })
       sync()
       ScrollTrigger.refresh()
@@ -140,17 +126,17 @@ function HorizontalExpertise() {
           <article
             key={s.key}
             data-panel
-            className="relative grid h-[74svh] w-[72vw] max-w-[1200px] shrink-0 grid-cols-2 overflow-hidden rounded-[28px] border border-[var(--line)] bg-white/[0.03] backdrop-blur-[2px]"
+            className="relative grid h-[74svh] w-[72vw] max-w-[1200px] shrink-0 grid-cols-2 grid-rows-[minmax(0,1fr)] overflow-hidden rounded-[28px] border border-[var(--line)] bg-white/[0.03] backdrop-blur-[2px]"
           >
-            <div className="flex flex-col justify-between p-[clamp(1.5rem,3vw,3rem)]">
+            <div className="flex min-h-0 flex-col justify-between p-[clamp(1.5rem,3vw,3rem)]">
               <span data-in dir="ltr" className="font-display text-sm text-muted rtl:text-end">
                 0{i + 1} / 03
               </span>
-              <div className="flex flex-col gap-6">
-                <h3 data-in className="font-display text-[clamp(2.2rem,4vw,4.2rem)] leading-[1] font-bold tracking-[-0.02em] rtl:leading-[1.3] rtl:tracking-normal">
+              <div className="flex flex-col gap-[clamp(0.75rem,2.6svh,1.5rem)]">
+                <h3 data-in className="font-display text-[clamp(2rem,min(4vw,7.5svh),4.2rem)] leading-[1] font-bold tracking-[-0.02em] rtl:leading-[1.3] rtl:tracking-normal">
                   {s.title}
                 </h3>
-                <p data-in className="max-w-[34ch] text-lg text-muted">
+                <p data-in className="max-w-[34ch] text-[clamp(1rem,2.4svh,1.125rem)] text-muted">
                   {s.body}
                 </p>
                 <div data-in>
@@ -158,7 +144,7 @@ function HorizontalExpertise() {
                 </div>
               </div>
             </div>
-            <div className="relative border-s border-[var(--line)]">
+            <div className="relative min-h-0 overflow-hidden border-s border-[var(--line)]">
               <ServiceVisual kind={s.key} />
             </div>
           </article>

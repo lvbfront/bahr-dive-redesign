@@ -122,7 +122,7 @@ export function SonarPhone({ active }: { active: boolean }) {
           }}
         />
       ))}
-      <svg viewBox="0 0 120 230" className="relative h-[62%] w-auto">
+      <svg viewBox="0 0 120 230" className="relative h-[62%] max-h-full w-auto">
         <rect x="4" y="4" width="112" height="222" rx="22" fill="none" stroke="currentColor" strokeWidth="2" />
         <rect x="42" y="14" width="36" height="7" rx="3.5" fill="currentColor" opacity="0.6" />
         <circle cx="60" cy="118" r="5" fill="#6b8cff" style={{ animation: 'node-pulse 2.1s ease-in-out infinite' }} />
