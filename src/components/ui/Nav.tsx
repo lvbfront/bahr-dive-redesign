@@ -3,6 +3,8 @@ import { AnimatePresence, m } from 'motion/react'
 import { useLang } from '../../lib/i18n'
 import { scrollToTarget, getLenis } from '../../providers/SmoothScroll'
 import { LangToggle } from './LangToggle'
+import { BahrMark } from '../brand/BahrMark'
+import { useReducedMotion } from '../../lib/hooks'
 
 const EXPO = [0.16, 1, 0.3, 1] as const
 
@@ -30,6 +32,7 @@ function MenuIcon({ open }: { open: boolean }) {
  */
 export function Nav() {
   const { t, isRTL } = useLang()
+  const reduced = useReducedMotion()
   const [open, setOpen] = useState(false)
   const sheet = useRef<HTMLDivElement>(null)
   const [dockAway, setDockAway] = useState(false)
@@ -101,12 +104,10 @@ export function Nav() {
           aria-label="Primary"
           className="flex items-center justify-between gap-6 pt-[max(1.25rem,var(--safe-top))] pb-5 ps-[calc(var(--gutter)+var(--rail))] pe-[var(--gutter)] mob:pt-[max(0.625rem,var(--safe-top))] mob:pb-2"
         >
-          <a href="#top" onClick={go('top')} aria-label={t.a11y.home} className="group -my-2 flex min-h-11 items-center" data-cursor>
-            <span dir="ltr" lang="en" className="font-display text-[1.35rem] leading-none font-extrabold tracking-[0.02em]">
-              {t.brand.word}
-              <span className="text-accent inline-block transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-y-[-0.12em]">
-                {t.brand.dot}
-              </span>
+          <a href="#top" onClick={go('top')} aria-label={t.a11y.home} className="group -my-2 flex min-h-11 min-w-11 items-center" data-cursor>
+            {/* Bahr's mark docks here after flying up from the hero (rendered static in reduced motion) */}
+            <span data-nav-mark-slot className="block aspect-[1007/882] h-8 mob:h-7">
+              {reduced && <BahrMark className="nav-mark h-full" />}
             </span>
           </a>
 

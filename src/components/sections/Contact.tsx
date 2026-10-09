@@ -3,7 +3,7 @@ import { gsap, SplitText, useGSAP } from '../../lib/gsap'
 import { useLang } from '../../lib/i18n'
 import { EMAIL, LINKEDIN } from '../../content/en'
 import { Magnetic } from '../ui/Magnetic'
-import { brandMark } from '../../lib/assets'
+import { BahrMark } from '../brand/BahrMark'
 
 const BUBBLES = [
   { l: '18%', s: 10, t: '3.2s', d: '0s', dx: '-6px' },
@@ -78,12 +78,10 @@ export function Contact() {
       />
       <p className="kicker relative">{t.contact.kicker} — <span dir="ltr">−3,000 {t.depth.unit}</span></p>
 
-      {brandMark && (
-        <div className="relative mt-10 w-[clamp(110px,14vw,200px)]">
-          {/* never upscaled: natural width, capped by the wrapper */}
-          <img data-mark src={brandMark} alt={t.a11y.mark} loading="lazy" decoding="async" className="block h-auto w-auto max-w-full" />
-        </div>
-      )}
+      {/* Bahr's mark: the treasure at the bottom of the dive */}
+      <div data-mark className="relative mt-10 w-[clamp(120px,15vw,210px)]">
+        <BahrMark live className="w-full" />
+      </div>
 
       <div className="relative mt-10 grid items-center gap-12 lg:grid-cols-[1fr_auto]">
         <h2

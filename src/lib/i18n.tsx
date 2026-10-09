@@ -83,6 +83,10 @@ export function LangProvider({ children }: { children: ReactNode }) {
     setLang((l) => {
       const next = l === 'en' ? 'ar' : 'en'
       safeStorage.set(KEY, next)
+      // flip <html> now, so the freshly mounted tree measures itself in the new direction (child layout effects run
+      // before this provider's own effect)
+      document.documentElement.lang = next
+      document.documentElement.dir = next === 'ar' ? 'rtl' : 'ltr'
       return next
     })
     setPhase('covered')

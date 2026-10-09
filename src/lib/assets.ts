@@ -11,6 +11,3 @@ export function workShot(slug?: string): string | null {
   }
   return null
 }
-
-/** Bahr's "بحر" mark, only when a clean extraction exists. */
-export const brandMark: string | null = __BRAND_MARK__ ? `/brand/${__BRAND_MARK__}` : null

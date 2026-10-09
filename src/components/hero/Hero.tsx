@@ -5,6 +5,7 @@ import { useLang } from '../../lib/i18n'
 import { isLowEnd, isTouch, MOBILE, useInView, usePageVisible, useReducedMotion } from '../../lib/hooks'
 import { heroState, INTRO_DONE, isIntroDone } from './heroState'
 import { scrollToTarget } from '../../providers/SmoothScroll'
+import { BahrMark } from '../brand/BahrMark'
 
 const WaterCanvas = lazy(() => import('./WaterCanvas'))
 /** survives the page remount on a language switch: once loaded, load again immediately */
@@ -189,6 +190,20 @@ export function Hero() {
                 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 46%, rgba(230,240,240,0.95) 50%, rgba(159,183,196,0.5) 62%, rgba(159,183,196,0) 100%)',
               filter: 'blur(6px)',
             }}
+          />
+        </div>
+
+        {/* Bahr's mark floats here at the surface; <HeroMark /> flies it into the nav (static here in reduced motion) */}
+        <div
+          data-hero-mark-slot
+          aria-hidden={!reduced || undefined}
+          className="absolute end-[var(--gutter)] top-[max(17svh,9.5rem)] z-10 aspect-[1007/882] h-[min(30svh,20vw)] mob:top-[19svh] mob:h-[min(19svh,32vw)]"
+        >
+          {reduced && <BahrMark className="h-full" />}
+          <span
+            data-mark-shadow
+            aria-hidden
+            className="pointer-events-none absolute inset-x-[8%] -bottom-[9%] h-[10%] rounded-[50%] bg-[radial-gradient(closest-side,rgba(11,47,128,0.28),transparent)] blur-[6px]"
           />
         </div>
 

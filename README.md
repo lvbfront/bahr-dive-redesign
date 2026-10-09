@@ -38,6 +38,11 @@ darkens to near black, a live depth meter counts down, and the contact call to a
   - The headline is revealed with SplitText.
   - A pinned, scrubbed scene handles **breaking the surface**: the camera dips below the waterline, the surface tilts
     and rises away, a meniscus sweeps past the lens, and the headline sinks and blurs.
+  - **Bahr's «بحر» mark** floats at the surface next to the headline.
+    - It's a vector with a living liquid gradient inside the letters, in Bahr's blues. It drifts on its own and stirs
+      with a soft ripple when the pointer or a finger moves inside the letters.
+    - As you start scrolling it shrinks and flies up into the nav, scrubbed with the scroll, and becomes the logo for
+      the rest of the page. Scrolling back to the top reverses it.
 - **The agency.** The statement is revealed word by word on scroll, the paragraphs rise line by line, and the
   "Explore our expertise" button has a magnetic hover.
 - **In good company.** Project names drift in two rows in opposite directions like currents. The speed reacts to scroll
@@ -54,7 +59,7 @@ darkens to near black, a live depth meter counts down, and the contact call to a
   - Clicking plays a circle-wipe "portal" and then opens the project on bybahr.com in a new tab.
 - **Seabed.**
   - The giant line "Let's dive deeper." sits here, and the depth meter pulses once at −3,000 m.
-  - Bahr's own blue «بحر» mark glows into view above it, like the treasure at the bottom of the dive.
+  - Bahr's «بحر» mark, in its liquid gradient, glows into view above it, like the treasure at the bottom of the dive.
   - The email button is a large circle with rising bubbles and a slight magnetic pull.
   - "Back to surface ↑" scrolls to the top with Lenis while the meter counts back up and the colours reverse.
 - **Arabic and RTL.**
@@ -118,7 +123,7 @@ Lighthouse (local production build, Lighthouse 12 with its default simulated thr
 
 | | Performance | Accessibility | Best practices | SEO |
 |---|---|---|---|---|
-| Mobile | **84–87** | 100 | 100 | 100 |
+| Mobile | **84–90** | 100 | 100 | 100 |
 | Desktop | **94–97** | 100 | 100 | 100 |
 
 ## Run it
@@ -147,18 +152,27 @@ still our own translation.
 
 ## Adding Bahr's images
 
-Both kinds of image are optional. Only files that exist are referenced, so nothing 404s, and the dev server needs a
+Project screenshots are optional. Only files that exist are referenced, so nothing 404s, and the dev server needs a
 restart after you add files.
 
 - **Project screenshots.** Drop `alageely`, `riyadh-retina`, `sycleague` and `lineup` (`.png`, `.jpg` or `.webp`) into
   `public/work/`, then run `npm run images`. That converts them to WebP (max 1280 px wide) and removes the originals.
   A project without a file shows its designed abstract mini-site instead.
-- **The «بحر» mark.** Run `npm run mark -- path/to/screenshot.png`.
-  - It keeps only the blue mark: it drops the light background, the grey contour lines and the black words, softens
-    and un-fringes the edges, and crops tightly.
-  - It writes `public/brand/bahr-mark.webp` and `.png`.
-  - The mark is shown at its natural size at most, never upscaled. It appears only in the seabed section and the
-    intro, never in the hero.
+
+## The «بحر» mark
+
+`src/assets/bahr-mark.svg` is a clean vector of Bahr's mark.
+- **How it was made.** The blue pixels were masked from two screenshots of bybahr.com, leaving out the light
+  background, the grey contour lines, the black words and the gold dot. The vertical stroke was rebuilt where text
+  crossed it. The mask was then smoothed, traced with potrace and checked against both screenshots at high zoom. It
+  matches the mark's pixels at IoU 0.998 on the large screenshot and 0.91 on the small one, where anti-aliasing
+  dominates.
+- **How it's drawn.** `<BahrMark />` clips a small raw-WebGL canvas, about 2 KB of shader and no three.js, with that
+  path. The canvas paints a flowing, domain-warped noise gradient in Bahr's blues; the pointer or a finger inside the
+  letters stirs it with inertia.
+- **Fallbacks.** Reduced motion, low-end phones and browsers without WebGL get the SVG with a slowly turning gradient.
+  It pauses off-screen, caps DPR at 1.5 (1.25 on touch) and is labelled "Bahr".
+- **Where it appears.** It's used in the hero (then the nav), the intro ripple and the seabed.
 
 ## Credits
 
@@ -167,5 +181,6 @@ restart after you add files.
   (Noise Studio). No assets or code were copied.
 - Fonts: [Syne](https://fonts.google.com/specimen/Syne) and [IBM Plex Sans Arabic](https://fonts.google.com/specimen/IBM+Plex+Sans+Arabic),
   both under the SIL Open Font License.
+- The «بحر» mark belongs to Bahr.
 - All brand content belongs to Bahr Agency, including the «بحر» calligraphy mark, the "BAHR." wordmark and the
   project screenshots. They are used here only for this challenge entry.

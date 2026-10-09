@@ -118,17 +118,42 @@ src/
     restored per section (index plus fraction).
   - The ErrorBoundary retries once and then shows a static fallback, so a crash never shows a blank page.
   - The Intro, Cursor, Lenis and the veil live outside the keyed tree.
-- **Expertise reveal.** Panel text (and the drifting project frames) is driven by each panel's on-screen rect, read in
-  the horizontal tween's `onUpdate`. It no longer uses per-panel `containerAnimation` triggers, which the last panel
-  could fail to reach. A revealed panel stays revealed, and leaving the pin reveals everything.
-- **Owner images** (optional; `vite.config.ts` lists what exists into `__WORK_SHOTS__` and `__BRAND_MARK__`, so missing
-  files never 404).
-  - The website screenshots for the four featured projects drift in panel 01 (`public/work/<slug>.webp`, via
-    `npm run images`). Until a file exists, that project shows a framed, named placeholder.
-  - Bahr's «بحر» mark (`public/brand/bahr-mark.webp`, via `npm run mark`) appears only at the seabed and in the intro,
-    never in the hero, and is never upscaled.
-  - The owner's attachments did not reach the build container, so neither the screenshots nor the mark are committed
-    yet. The code paths were verified with placeholders and with a synthetic test mark, which was not shipped.
+- **Expertise panels.** Panel text is never animated by scroll; it's always-visible content. The real cause of panel 03
+  appearing empty on laptops: the phone illustration's SVG gave the panel's grid row an intrinsic height taller than
+  the panel. The left column stretched with it, so its bottom-aligned title, body and tags fell below the panel's
+  `overflow: hidden`.
+  - Fix: `grid-rows-[minmax(0,1fr)]` plus `min-h-0` on both columns, `max-h-full` on the phone SVG, and
+    height-aware type.
+  - Verified at 1280×650, 1366×768, 1440×800, 1536×864 and 1920×1080 in EN and AR, with slow, fast, backward and
+    wheel scrolling (0 problems).
+  - The project-frame drift still follows each panel's on-screen rect.
+- **Owner images** (optional; `vite.config.ts` lists what exists into `__WORK_SHOTS__`, so missing files never 404):
+  website screenshots for the four featured projects (`public/work/<slug>.webp`, via `npm run images`). Until a file
+  exists, that project shows its designed mini-site.
+- **Bahr's «بحر» mark** (owner request; supersedes the earlier "no calligraphy" note for the mark itself — the hero
+  still has no contour lines and keeps our own water surface).
+  - Vector: `src/assets/bahr-mark.svg`. The blue pixels were masked from the owner's two screenshots; the grey lines,
+    the black «تلف», the gold dot and the background were removed.
+    - The vertical stroke was rebuilt where the text crossed it, by fitting its edges per row.
+    - The mask was Gaussian-smoothed, traced with potrace and overlaid at 4× zoom.
+    - IoU is 0.998 against the large screenshot and 0.91 against the 278 px one.
+  - The vertical stroke is part of the mark: it appears in both screenshots in the same place and in the same blues
+    (it reads as the «ب» stroke with the diamond as its dot).
+  - The raster `npm run mark` pipeline was removed.
+  - `<BahrMark />` (`src/components/brand/`) is an SVG path plus a raw-WebGL liquid canvas (`liquid.ts`) clipped by a
+    CSS mask built from the same path.
+    - The pointer stirs the liquid only inside the letters (`isPointInFill`), with inertia.
+    - It pauses off-screen and in hidden tabs, and caps DPR at 1.5 (1.25 on touch).
+    - Reduced motion, low-end touch devices and no WebGL get the SVG with a slow SMIL gradient rotation.
+    - `paused` keeps the GL context but shows the static SVG gradient.
+  - Hero → nav: `<HeroMark />` is a fixed element laid over `[data-hero-mark-slot]` inside the pinned hero, scrubbed
+    to `[data-nav-mark-slot]` over the first 42% (desktop) or 30% (phones) of a viewport of scroll.
+    - Its geometry is re-measured on every refresh and resize.
+    - Docked = progress > 0.97, which switches to the static gradient and brightens it over deep water.
+    - It lives in the language-keyed tree, so a switch reverts its tween and trigger.
+    - The switch also flips `<html dir>` before the new tree mounts, so the mark measures the right side.
+  - Reduced motion: a static mark in the hero and a static mark in the nav slot, with no flight.
+  - Also used in the intro (the ripple resolves into it) and at the seabed (it glows in at −3,000 m).
 - **Phones are their own design** (see README → Mobile): native scroll, short pin, bottom thumb dock + bottom-sheet menu,
   slim gutter gauge, in-view equivalents for every hover. "Phone" = `MOBILE` in `src/lib/hooks.ts` = the `mob:` variant.
 - **Project frames** in Expertise are designed abstract mini-sites (`src/components/ui/MiniSite.tsx`), never fake
@@ -190,8 +215,15 @@ overflow, meter overlap and tap-target size.
 - Repo: https://github.com/lvbfront/bahr-dive-redesign (`main`; work branch `claude/nice-faraday-nzc3xg`)
 - Live: deploys on push once the repo is imported in Vercel (defaults: Vite / `npm run build` / `dist`). The Vercel CLI
   was not available in the build container, so the first deploy is a one-time manual import.
-- Lighthouse (local prod build, simulated throttling): mobile Performance 84–87, desktop 94–97; Accessibility,
+- Lighthouse (local prod build, simulated throttling): mobile Performance 84–90, desktop 94–97; Accessibility,
   Best practices and SEO 100 on both.
+- 4th pass: expertise panel 03 fixed for real (grid row overflow) and verified at 5 laptop sizes × EN/AR × slow/fast/
+  backward/wheel (0 problems).
+  - Bahr's «بحر» mark is vectorised (IoU 0.998) and drawn as a liquid WebGL `<BahrMark />`. It's in the hero, flies to
+    the nav and docks there, and also appears in the intro and at the seabed.
+  - Language switch verified 12× on desktop and 12× on phone, including mid-flight, with 0 errors and the mark on the
+    correct side.
+  - Mobile audit clean. Lighthouse mobile 84–90, desktop 96.
 - 3rd pass (mobile): full phone audit + fixes, see "Mobile audit" and "Mobile pass — resolution" above; language switch
   re-verified 10× from the phone dock, desktop panels / language switch / reduced motion re-checked.
 - 2nd pass: language switch verified 10× in a row at every section (incl. inside both pins), desktop + mobile, no errors;

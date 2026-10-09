@@ -20,6 +20,7 @@ import { Expertise } from './components/sections/Expertise'
 import { Work } from './components/sections/Work'
 import { Contact } from './components/sections/Contact'
 import { Footer } from './components/sections/Footer'
+import { HeroMark } from './components/hero/HeroMark'
 
 const loadMotionFeatures = () => import('./lib/motion-features').then((r) => r.default)
 
@@ -64,6 +65,7 @@ function Page() {
         <Contact />
       </main>
       <Footer />
+      <HeroMark />
       <DiveController />
     </>
   )

@@ -8,8 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b",
-    "images": "node scripts/images.mjs",
-    "mark": "node scripts/extract-mark.mjs"
+    "images": "node scripts/images.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
